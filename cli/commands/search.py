@@ -35,9 +35,9 @@ def search(**kwargs):
             def thread_function():
                 try:
                     reg = region
-                    acct = account['accountId']
-                    console.print(f"In Thread {reg}-{acct}")
+                    acct = account
                     creds = sso.getCreds(account=acct)
+                    acct = acct['accountId']
                     client = boto3.client('ec2', region_name=reg, aws_access_key_id=creds.access_key,
                                           aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
                     maps['ruleMap'][reg][acct] = grab_sec_group_rules(client)
@@ -46,9 +46,9 @@ def search(**kwargs):
                         filter(cli.filters['port'].allow, ['ruleMap'][reg][acct]))
                     maps['ruleMap'][reg][acct] = list(
                         filter(cli.filters['protocol'].allow, ['ruleMap'][reg][acct]))
-                    maps['ruleMap'][reg][acct] = list(
+                    maps['ruleMap'][reg][acct['accountId']] = list(
                         filter(cli.filters['source'].allow, ['ruleMap'][reg][acct]))
-                    maps['ruleMap'][reg][acct] = list(
+                    maps['ruleMap'][reg][acct['accountId']] = list(
                         filter(cli.filters['dest'].allow, ['ruleMap'][reg][acct]))
                 except Exception as e:
                     console.print(e)
