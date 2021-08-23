@@ -1,10 +1,10 @@
 from threading import Thread
 from aws.instances import grab_instances
+from aws.rules import grab_sec_group_rules
 from logging import getLogger
 
 import boto3
 from aws.sso import SSO
-from aws.rules import grab_sec_group_rules
 
 # logger = getLogger(__name__)
 
