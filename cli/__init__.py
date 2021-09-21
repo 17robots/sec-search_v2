@@ -1,7 +1,7 @@
 import click
-from .commands.search import search
-from .commands.watch import watch
-from .commands.diff import diff
+from .diff import diff
+from .search import search
+from .watch import watch
 
 
 @click.group()
