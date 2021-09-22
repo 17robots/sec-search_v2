@@ -8,7 +8,6 @@ def common_options(func):
     @click.option('-accounts',  default=None, type=str, help='AWS accounts within user credentials to filter by', required=False)
     @click.option('-ports',  default=None, type=str, help='Ports to filter by', required=False)
     @click.option('-protocols',  default=None, type=str, help='Protocols to filter by', required=False)
-    @click.option('-output', default=None, type=str, help="File to output results of command to")
     def wrapped_func(*args, **kwargs):
         func(*args, **kwargs)
     return wrapped_func
