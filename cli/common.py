@@ -12,3 +12,7 @@ def common_options(func):
     def wrapped_func(*args, **kwargs):
         func(*args, **kwargs)
     return wrapped_func
+
+
+def destructure(obj, *keys):
+    return [obj[k] if k in obj else None for k in keys]

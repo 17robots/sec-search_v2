@@ -1,3 +1,4 @@
+from cli.common import destructure
 import click
 
 
@@ -5,5 +6,4 @@ import click
 @click.argument('sg1')
 @click.argument('sg2')
 def diff(**kwargs):
-    sg1 = kwargs.get('sg1', None)
-    sg2 = kwargs.get('sg1', None)
+    [sg1, sg2] = destructure(kwargs, 'sg1', 'sg2')

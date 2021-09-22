@@ -1,14 +1,9 @@
 import click
-from .common import common_options
+from .common import common_options, destructure
 
 
 @click.comamnd()
 @common_options()
 def search(**kwargs):
-    srcStr = kwargs.get('sources', None)
-    destStr = kwargs.get('dests', None)
-    regStr = kwargs.get('regions', None)
-    acctStr = kwargs.get('accounts', None)
-    portStr = kwargs.get('ports', None)
-    protocolStr = kwargs.get('protocols', None)
-    outputStr = kwargs.get('output', None)
+    [srcStr, destStr, regStr, acctStr, portStr, protocolStr, outputStr] = destructure(
+        kwargs, 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'output')  # grab args
