@@ -2,10 +2,11 @@ from enum import Enum
 from typing import List
 from instance import Instance
 
+
 def grab_sec_group_rules(client):
     paginator = client.get_paginator('describe_security_group_rules').paginate(
         PaginationConfig={'PageSize': 1000})
-    return [ val for val in paginator ]
+    return [val for val in paginator]
 
 
 class Rule:
@@ -34,7 +35,7 @@ class Rule:
                     if instance.priv_ipv6:
                         for ip in instance.priv_ipv6:
                             ipaddresses.append(ip)
-                    
+
                 if instance.other_grps and group in instance.other_grps:
                     if instance.priv_ipv4:
                         for ip in instance.priv_ipv4:
