@@ -12,6 +12,33 @@ def search(**kwargs):
     [srcStr, destStr, regStr, acctStr, portStr, protocolStr, outputStr, allow_floating] = destructure(
         kwargs, 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'output', 'show-floating')  # grab args
 
+    srcs = []
+    if '@' in srcStr:
+        try:
+            with open(srcStr[srcStr.index('@')+1:], 'w') as f:
+                for line in f:
+                    srcs.append(line)
+        except:
+            pass # change this
+    
+    if not srcs:
+        srcs = [ src.strip(' ') for src in srcStr.strip('!').split(', ')] if srcStr != None else []
+
+    dsts = []
+    if '@' in destStr:
+        try:
+            with open(destStr[destStr.index('@')+1:], 'w') as f:
+                for line in f:
+                    dsts.append(line)
+        except:
+            pass # change this
+    
+    if not dsts:
+        dsts = [ dst.strip(' ') for dst in destStr.strip('!').split(', ')] if destStr != None else []
+    
+    prts = [ prt.strip(' ') for prt in portStr.strip('!').split(', ')] if portStr != None else []
+    prots = [ prot.strip(' ') for prot in protocolStr.strip('!').split(', ')] if protocolStr != None else []
+
     def filterRule(rule: Rule):
         if rule.floating and not allow_floating:
             return False

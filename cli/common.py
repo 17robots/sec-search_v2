@@ -1,5 +1,5 @@
 import click
-
+import ipaddress
 
 def common_options(func):
     @click.option('-sources', default=None, type=str, help='Name or ip of source vm', required=False)
@@ -43,11 +43,19 @@ def filter_accounts(accounts, inclusive):
 def filter_ips(ips, criteria_ips, inclusive):
     if len(ips) > 0:
         for ip in ips:
-            if ip in criteria_ips:
-                return inclusive
+            for criteria in criteria_ips:
+                x = ipaddress.ip_network(ip)
+                y = ipaddress.ip_network(criteria)
+                if x.subnet_of(y):
+                    return inclusive
+                if y.subnet_of(x):
+                    return inclusive
+                if ip in criteria:
+                    return inclusive
+                if criteria in ip:
+                    return inclusive
             return not inclusive
     return True
-
 
 # return whether the rule should be let through based on the port filter
 def filter_port(port, ports, inclusive):
@@ -67,3 +75,7 @@ def filter_protocol(proto, protos, inclusive):
         else:
             return not inclusive
     return True
+
+def parse_cli(**kwargs):
+    
+    pass
