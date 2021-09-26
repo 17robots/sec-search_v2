@@ -7,3 +7,4 @@ import click
 @click.argument('sg2', nargs=1)
 def diff(**kwargs):
     [sg1, sg2] = destructure(kwargs, 'sg1', 'sg2')
+    

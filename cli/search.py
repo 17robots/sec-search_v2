@@ -42,8 +42,8 @@ def search(**kwargs):
 
 
 def parse__search_args(**kwargs):
-    [srcStr, destStr, regStr, acctStr, portStr, protocolStr, outputStr, allow_floating] = destructure(
-        kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'output', 'show_floating')  # grab args
+    [srcStr, destStr, regStr, acctStr, portStr, protocolStr, no_ui, outputStr, allow_floating] = destructure(
+        kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'no_ui', 'output', 'show_floating')  # grab args
 
     srcs = []
     if srcStr:
@@ -82,4 +82,4 @@ def parse__search_args(**kwargs):
     accts = [acct.strip(' ') for acct in acctStr.strip(
         '!').split(',')] if acctStr != None else []
 
-    return [(srcs, not '!' in srcStr if srcStr != None else True), (dsts, not '!' in destStr if destStr != None else True), (prts, not '!' in portStr if portStr != None else True), (prots, not '!' in protocolStr if protocolStr != None else True), (regs, not '!' in regStr if regStr != None else True), (accts, not '!' in acctStr if acctStr != None else True), outputStr, allow_floating]
+    return [(srcs, not '!' in srcStr if srcStr != None else True), (dsts, not '!' in destStr if destStr != None else True), (prts, not '!' in portStr if portStr != None else True), (prots, not '!' in protocolStr if protocolStr != None else True), (regs, not '!' in regStr if regStr != None else True), (accts, not '!' in acctStr if acctStr != None else True), no_ui, outputStr, allow_floating]

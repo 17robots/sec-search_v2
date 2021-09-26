@@ -7,8 +7,6 @@ from aws.sso import SSO
 def diff(sg1_id, sg2_id):
     sso = SSO()
     threads = []
-    group1_rules = []
-    group2_rules = []
     sg1, sg2 = None
     for region in sso.getRegions():
         for account in sso.getAccounts()['accountList']:
