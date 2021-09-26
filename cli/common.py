@@ -1,6 +1,7 @@
 import click
 import ipaddress
 
+
 def common_options(func):
     @click.option('-sources', default=None, type=str, help='Name or ip of source vm', required=False)
     @click.option('-dests',  default=None, type=str, help='Name or ip of dest vm', required=False)
@@ -8,6 +9,7 @@ def common_options(func):
     @click.option('-accounts',  default=None, type=str, help='AWS accounts within user credentials to filter by', required=False)
     @click.option('-ports',  default=None, type=str, help='Ports to filter by', required=False)
     @click.option('-protocols',  default=None, type=str, help='Protocols to filter by', required=False)
+    @click.option('--no-ui',  default=False, type=bool, help='Disable TUI And Show Raw Output', required=False)
     def wrapped_func(*args, **kwargs):
         func(*args, **kwargs)
     return wrapped_func
@@ -22,19 +24,17 @@ def filter_regions(regions, inclusive):
         if len(regions) > 0:
             if region in regions:
                 return inclusive
-            else:
-                return not inclusive
+            return not inclusive
         return True
     return filter_func
 
 
 def filter_accounts(accounts, inclusive):
     def filter_func(account):
-        if len(account) > 0:
+        if len(accounts) > 0:
             if account in accounts:
                 return inclusive
-            else:
-                return not inclusive
+            return not inclusive
         return True
     return filter_func
 
@@ -57,13 +57,13 @@ def filter_ips(ips, criteria_ips, inclusive):
             return not inclusive
     return True
 
+
 # return whether the rule should be let through based on the port filter
 def filter_port(port, ports, inclusive):
     if len(ports) > 0:
-        if port in ports:
+        if str(port) in ports:
             return inclusive
-        else:
-            return not inclusive
+        return not inclusive
     return True
 
 
@@ -72,10 +72,5 @@ def filter_protocol(proto, protos, inclusive):
     if len(protos) > 0:
         if proto in protos:
             return inclusive
-        else:
-            return not inclusive
+        return not inclusive
     return True
-
-def parse_cli(**kwargs):
-    
-    pass

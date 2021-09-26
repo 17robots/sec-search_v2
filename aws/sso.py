@@ -20,7 +20,7 @@ class SSO:
             'accessToken']
 
         self.client = boto3.client('sso', region_name=self.region)
-        self.cred_table = dict({str: Credentials})
+        self.cred_table = {}
 
     def getAccounts(self):
         return self.client.list_accounts(accessToken=self.access_token)
@@ -34,7 +34,7 @@ class SSO:
             creds = self.client.get_role_credentials(
                 accountId=account_id, accessToken=self.access_token, roleName='AWSPowerUserAccess')
             self.cred_table[account_id] = Credentials(access_key=creds['roleCredentials']['accessKeyId'], secret_access_key=creds['roleCredentials']
-                                                                ['secretAccessKey'], session_token=creds['roleCredentials']['sessionToken'], expiration=creds['roleCredentials']['expiration'])
+                                                      ['secretAccessKey'], session_token=creds['roleCredentials']['sessionToken'], expiration=creds['roleCredentials']['expiration'])
             return self.cred_table[account_id]
 
         except ClientError as e:
@@ -42,7 +42,7 @@ class SSO:
             return
 
     def getRegions(self):
-        initAccount = self.getAccounts()['accountList'][0]
+        initAccount = self.getAccounts()['accountList'][0]['accountId']
         initCreds = self.getCreds(initAccount)
         ec2 = boto3.client('ec2', region_name='us-east-1', aws_access_key_id=initCreds.access_key,
                            aws_secret_access_key=initCreds.secret_access_key, aws_session_token=initCreds.session_token)
