@@ -1,4 +1,3 @@
-import json
 from aws.aws_search import aws_search
 from aws.sgr import Rule
 import click
@@ -11,25 +10,28 @@ from .common import *
 @common_options
 def search(**kwargs):
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
-     (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive), output, allow_floating] = parse__search_args(kwargs=kwargs)
-
-    print(regs)
+     (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive), no_ui, output, allow_floating] = parse_search_args(kwargs=kwargs)
 
     if not allow_floating:
         allow_floating = False
 
     def filterRule(rule: Rule):
-        # if rule.floating and not allow_floating:
-        #     print('false 1')
-        #     return False
+        if rule.floating == True and allow_floating == False:
+            print('false 1')
+            return False
         if not filter_ips(rule.source_ips, srcs, inclusive=src_inclusive):
+            print('false 2')
             return False
         if not filter_ips(rule.dest_ips, dsts, inclusive=dst_inclusive):
+            print('false 3')
             return False
         if not filter_port(rule.to_port, prts, inclusive=prt_inclusive):
+            print('false 4')
             return False
         if not filter_protocol(rule.protocol, prots, inclusive=prot_inclusive):
+            print('false 5')
             return False
+        print(f'accepting rule {rule.id}')
         return True
 
     filters = {
@@ -38,13 +40,12 @@ def search(**kwargs):
         'rule': filterRule
     }
 
-    print(len(results := aws_search(filters)))
+    print(len(aws_search(filters)))
 
 
-def parse__search_args(**kwargs):
+def parse_search_args(**kwargs):
     [srcStr, destStr, regStr, acctStr, portStr, protocolStr, no_ui, outputStr, allow_floating] = destructure(
         kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'no_ui', 'output', 'show_floating')  # grab args
-
     srcs = []
     if srcStr:
         if '@' in srcStr:

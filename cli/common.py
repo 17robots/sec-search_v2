@@ -41,7 +41,7 @@ def filter_accounts(accounts, inclusive):
 
 # return whether the rule should be let through based on the ip filter
 def filter_ips(ips, criteria_ips, inclusive):
-    if len(ips) > 0:
+    if len(criteria_ips) > 0:
         for ip in ips:
             for criteria in criteria_ips:
                 x = ipaddress.ip_network(ip)

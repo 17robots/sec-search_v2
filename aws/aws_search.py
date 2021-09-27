@@ -24,7 +24,8 @@ def aws_search(filters):
             def thread_func():
                 try:
                     thread_region = region
-                    thread_account = account['accountId']
+                    myAccount = account
+                    thread_account = myAccount['accountId']
                     creds = auth.getCreds(account_id=thread_account)
                     client = boto3.client('ec2', region_name=region, aws_access_key_id=creds.access_key,
                                           aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
@@ -44,4 +45,11 @@ def aws_search(filters):
             x.start()
     for process in threads:
         process.join()
+
+    ret_arr = []
+    for region in ruleMap:
+        for acct in ruleMap[region]:
+            for rule in ruleMap[region][acct]:
+                ret_arr.append(rule)
+    return ret_arr
     return [rule for region in ruleMap for account in ruleMap[region] for rule in ruleMap[region][account]]
