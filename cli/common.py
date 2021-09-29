@@ -75,6 +75,7 @@ def filter_protocol(proto, protos, inclusive):
         return not inclusive
     return True
 
+
 def parse_common_args(**kwargs):
     [srcStr, destStr, regStr, acctStr, portStr, protocolStr, no_ui] = destructure(
         kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'no_ui')  # grab args

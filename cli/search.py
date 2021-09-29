@@ -1,7 +1,9 @@
-from aws.aws_search import aws_search
-from aws.sgr import Rule
+from traceback import print_stack
 import click
 import time
+from aws.aws_search import aws_search
+from aws.sgr import Rule
+from datetime import datetime
 from .common import *
 
 
@@ -15,7 +17,7 @@ def search(**kwargs):
 
     # command-specific args
     [output, allow_floating] = destructure(kwargs, 'output', 'show_floating')
-    
+
     if not allow_floating:
         allow_floating = False
 
@@ -37,8 +39,17 @@ def search(**kwargs):
         'region': filter_regions(regs, reg_inclusive),
         'rule': filterRule
     }
-    
+
     start = time.time()
     results = aws_search(filters)
     print(f'{len(results)} results found in {time.time() - start}s')
-    filename = output if output != None else ''
+    filename = output if output != None else "{}-{}.txt".format("search",
+                                                                str(datetime.now()).replace(" ", "_").replace(":", "-"))
+    print(f"Printing results to {filename}")
+    try:
+        with open(filename, 'w') as f:
+            f.write('\n'.join([str(result) for result in results]))
+    except Exception as e:
+        print_stack(e)
+    if len(results) < 20:
+        print('\n'.join([str(result) for result in results]))

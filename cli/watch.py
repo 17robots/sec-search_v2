@@ -4,6 +4,7 @@ from cli.common import common_options, destructure, filter_accounts, filter_regi
 from threading import Event, Thread
 import keyboard
 
+
 @click.command()
 @click.option('-query', default=None, type=str, help="File to output results of command to")
 @common_options
@@ -26,6 +27,7 @@ def watch(**kwargs):
     keyboard.add_hotkey(hotkey='q', callback=kill_lock.set, suppress=True)
     watch_thread.join()
 
+
 def build_query(**kwargs):
     [srcs, src_incl, dsts, dst_incl, prts, prt_incl, prots, prot_incl, query] = destructure(
         kwargs, 'srcs', 'src_inclusive', 'dsts', 'dst_inclusive', 'prts', 'prt_inclusive', 'prots', 'prot_inclusive', 'query')
@@ -41,14 +43,14 @@ def build_query(**kwargs):
         return_query += ')'
 
     if len(dsts) > 0:
-        return_query += " and (" if not return_query else "| filter ("
+        return_query += " and (" if return_query != '' else "| filter ("
         for dst in dsts:
             return_query += f"pkt_dstaddr = \"{dst}\" or " if dst_incl else f"pkt_dstaddr != \"{dst}\" or "
         return_query = return_query.rstrip(' or')
         return_query += ')'
 
     if len(prts) > 0:
-        return_query += " and (" if not return_query else "| filter ("
+        return_query += " and (" if return_query != '' else "| filter ("
         for prt in prts:
             return_query += f"srcport = \"{prt}\" or " if prt_incl else f"srcport != \"{prt}\" or "
             return_query += f"dstport = \"{prt}\" or " if prt_incl else f"dstport != \"{prt}\" or "
@@ -56,7 +58,7 @@ def build_query(**kwargs):
         return_query += ')'
 
     if len(prots) > 0:
-        return_query += " and (" if not return_query else "| filter ("
+        return_query += " and (" if return_query != '' else "| filter ("
         for prot in prots:
             return_query += f"protocol = \"{prot}\" or " if prot_incl else f"protocol != \"{prot}\" or "
         return_query = return_query.rstrip(' or')
