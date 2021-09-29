@@ -13,7 +13,7 @@ class Instance:
         self.other_grps = [grp['GroupId']
                            for interface in instance['NetworkInterfaces'] for grp in interface['Groups']]
         self.pub_ip = instance['PublicIpAddress'] if 'PublicIpAddress' in instance else None
-        self.vpc_id = instance['VpcId']
+        self.vpc_id = instance['VpcId'] if 'VpcId' in instance else None
         self.priv_ipv4 = [address['PrivateIpAddress'] for interface in instance['NetworkInterfaces']
                           for address in interface['PrivateIpAddresses']]
         self.priv_ipv6 = [address for interface in instance['NetworkInterfaces']

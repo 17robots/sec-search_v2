@@ -1,6 +1,7 @@
 from aws.aws_search import aws_search
 from aws.sgr import Rule
 import click
+import time
 from .common import *
 
 
@@ -10,28 +11,25 @@ from .common import *
 @common_options
 def search(**kwargs):
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
-     (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive), no_ui, output, allow_floating] = parse_search_args(kwargs=kwargs)
+     (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive), no_ui] = parse_common_args(kwargs=kwargs)
 
+    # command-specific args
+    [output, allow_floating] = destructure(kwargs, 'output', 'show_floating')
+    
     if not allow_floating:
         allow_floating = False
 
     def filterRule(rule: Rule):
         if rule.floating == True and allow_floating == False:
-            print('false 1')
             return False
         if not filter_ips(rule.source_ips, srcs, inclusive=src_inclusive):
-            print('false 2')
             return False
         if not filter_ips(rule.dest_ips, dsts, inclusive=dst_inclusive):
-            print('false 3')
             return False
         if not filter_port(rule.to_port, prts, inclusive=prt_inclusive):
-            print('false 4')
             return False
         if not filter_protocol(rule.protocol, prots, inclusive=prot_inclusive):
-            print('false 5')
             return False
-        print(f'accepting rule {rule.id}')
         return True
 
     filters = {
@@ -39,48 +37,8 @@ def search(**kwargs):
         'region': filter_regions(regs, reg_inclusive),
         'rule': filterRule
     }
-
-    print(len(aws_search(filters)))
-
-
-def parse_search_args(**kwargs):
-    [srcStr, destStr, regStr, acctStr, portStr, protocolStr, no_ui, outputStr, allow_floating] = destructure(
-        kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'no_ui', 'output', 'show_floating')  # grab args
-    srcs = []
-    if srcStr:
-        if '@' in srcStr:
-            try:
-                with open(srcStr[srcStr.index('@')+1:], 'w') as f:
-                    for line in f:
-                        srcs.append(line)
-            except:
-                pass  # change this
-
-    if not srcs:
-        srcs = [src.strip(' ') for src in srcStr.strip(
-            '!').split(',')] if srcStr != None else []
-
-    dsts = []
-    if destStr:
-        if '@' in destStr:
-            try:
-                with open(destStr[destStr.index('@')+1:], 'w') as f:
-                    for line in f:
-                        dsts.append(line)
-            except:
-                pass  # change this
-
-    if not dsts:
-        dsts = [dst.strip(' ') for dst in destStr.strip(
-            '!').split(',')] if destStr != None else []
-
-    prts = [prt.strip(' ') for prt in portStr.strip(
-        '!').split(',')] if portStr != None else []
-    prots = [prot.strip(' ') for prot in protocolStr.strip(
-        '!').split(',')] if protocolStr != None else []
-    regs = [reg.strip(' ') for reg in regStr.strip(
-        '!').split(',')] if regStr != None else []
-    accts = [acct.strip(' ') for acct in acctStr.strip(
-        '!').split(',')] if acctStr != None else []
-
-    return [(srcs, not '!' in srcStr if srcStr != None else True), (dsts, not '!' in destStr if destStr != None else True), (prts, not '!' in portStr if portStr != None else True), (prots, not '!' in protocolStr if protocolStr != None else True), (regs, not '!' in regStr if regStr != None else True), (accts, not '!' in acctStr if acctStr != None else True), no_ui, outputStr, allow_floating]
+    
+    start = time.time()
+    results = aws_search(filters)
+    print(f'{len(results)} results found in {time.time() - start}s')
+    filename = output if output != None else ''

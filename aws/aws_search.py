@@ -4,7 +4,7 @@ from threading import Thread
 from aws.instance import Instance, grab_instances
 from .sso import SSO
 from .sgr import grab_sec_group_rules, Rule
-
+from rich import print
 
 def aws_search(filters):
     auth = SSO()
@@ -33,9 +33,10 @@ def aws_search(filters):
                         map(lambda x: Instance(x), grab_instances(client)))
                     rules = list(map(lambda x: Rule(x, instances),
                                      grab_sec_group_rules(client)))
-                    print(f'{thread_region}-{thread_account}: {len(rules)}')
                     ruleMap[thread_region][thread_account] = list(filter(lambda x: filters['rule'](
                         x), rules))
+                    print(f"[{'red' if len(ruleMap[thread_region][thread_account]) == 0 else 'green'}]{thread_region}-{thread_account}: {len(ruleMap[thread_region][thread_account])} results[/{'red' if len(ruleMap[thread_region][thread_account]) == 0 else 'green'}]")
+                    
                 except Exception as e:
                     print_stack(e)
 
@@ -46,10 +47,4 @@ def aws_search(filters):
     for process in threads:
         process.join()
 
-    ret_arr = []
-    for region in ruleMap:
-        for acct in ruleMap[region]:
-            for rule in ruleMap[region][acct]:
-                ret_arr.append(rule)
-    return ret_arr
     return [rule for region in ruleMap for account in ruleMap[region] for rule in ruleMap[region][account]]
