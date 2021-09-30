@@ -116,4 +116,4 @@ def parse_common_args(**kwargs):
     accts = [acct.strip(' ') for acct in acctStr.strip(
         '!').split(',')] if acctStr != None else []
 
-    return [(srcs, not '!' in srcStr if srcStr != None else True), (dsts, not '!' in destStr if destStr != None else True), (prts, not '!' in portStr if portStr != None else True), (prots, not '!' in protocolStr if protocolStr != None else True), (regs, not '!' in regStr if regStr != None else True), (accts, not '!' in acctStr if acctStr != None else True), no_ui]
+    return [(srcs, '!' not in srcStr if srcStr != None else True), (dsts, '!' not in destStr if destStr != None else True), (prts, '!' not in portStr if portStr != None else True), (prots, '!' not in protocolStr if protocolStr != None else True), (regs, '!' not in regStr if regStr != None else True), (accts, '!' not in acctStr if acctStr != None else True)]

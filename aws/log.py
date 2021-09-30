@@ -1,7 +1,4 @@
 
-from dataclasses import field
-
-
 def get_log_names(client):
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()

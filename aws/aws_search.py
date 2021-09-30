@@ -1,12 +1,11 @@
 import boto3
-from traceback import print_stack
 from threading import Thread
 from aws.instance import Instance, grab_instances
 from .sso import SSO
 from .sgr import grab_sec_group_rules, Rule
 from rich import print
 
-def aws_search(filters):
+def aws_search(filters, console_functions):
     auth = SSO()
     threads = []
     ruleMap = {}
@@ -35,10 +34,12 @@ def aws_search(filters):
                                      grab_sec_group_rules(client)))
                     ruleMap[thread_region][thread_account] = list(filter(lambda x: filters['rule'](
                         x), rules))
-                    print(f"[{'red' if len(ruleMap[thread_region][thread_account]) == 0 else 'green'}]{thread_region}-{thread_account}: {len(ruleMap[thread_region][thread_account])} results[/{'red' if len(ruleMap[thread_region][thread_account]) == 0 else 'green'}]")
+                    
+                    color = 'red' if len(ruleMap[thread_region][thread_account]) == 0 else 'green'
+                    print(f"[{color}]{thread_region}-{thread_account}: {len(ruleMap[thread_region][thread_account])} results[/{color}]")
                     
                 except Exception as e:
-                    print_stack(e)
+                    console_functions['error'](str(e))
 
             x = Thread(daemon=True, target=thread_func,
                        name=f"{region}-{account['accountId']}")
