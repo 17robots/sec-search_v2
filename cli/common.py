@@ -44,12 +44,15 @@ def filter_ips(ips, criteria_ips, inclusive):
     if len(criteria_ips) > 0:
         for ip in ips:
             for criteria in criteria_ips:
-                x = ipaddress.ip_network(ip)
-                y = ipaddress.ip_network(criteria)
-                if x.subnet_of(y):
-                    return inclusive
-                if y.subnet_of(x):
-                    return inclusive
+                try:
+                    x = ipaddress.ip_network(ip)
+                    y = ipaddress.ip_network(criteria)
+                    if x.subnet_of(y):
+                        return inclusive
+                    if y.subnet_of(x):
+                        return inclusive
+                except:
+                    continue
                 if ip in criteria:
                     return inclusive
                 if criteria in ip:

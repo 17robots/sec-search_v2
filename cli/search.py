@@ -1,4 +1,3 @@
-from traceback import print_stack
 import click
 import time
 from aws.aws_search import aws_search
@@ -44,7 +43,7 @@ def search(**kwargs):
     }
 
     start = time.time()
-    results = aws_search(filters, console_functions)
+    results = aws_search(filters)
     print(f'{len(results)} results found in {time.time() - start}s')
     filename = output if output != None else "{}-{}.txt".format("search",
                                                                 str(datetime.now()).replace(" ", "_").replace(":", "-"))
@@ -53,6 +52,6 @@ def search(**kwargs):
         with open(filename, 'w') as f:
             f.write('\n'.join([str(result) for result in results]))
     except Exception as e:
-        error(str(e))
+        print(error(str(e)))
     if len(results) < 20:
         print('\n'.join([str(result) for result in results]))

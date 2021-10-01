@@ -1,4 +1,7 @@
 
+from botocore.exceptions import ClientError
+
+
 def get_log_names(client):
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()
@@ -11,7 +14,10 @@ def start_query(client, log_name, start_time, end_time, query):
 
 
 def query_results(client, query_id):
-    return client.get_query_results(queryId=query_id)
+    try:
+        return client.get_query_results(queryId=query_id)
+    except ClientError as e:
+        pass
 
 
 class Log:

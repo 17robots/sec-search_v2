@@ -4,6 +4,7 @@ from cli.common import common_options, destructure, filter_accounts, filter_regi
 from threading import Event, Thread
 import keyboard
 from cli.console_logger import console_functions
+from rich import print
 
 
 @click.command()
@@ -16,10 +17,10 @@ def watch(**kwargs):
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
     [query_param] = destructure(kwargs, 'query')
+    query = ""
     query = build_query(srcs=srcs, src_inclusive=src_inclusive,
                         dsts=dsts, dst_inclusive=dst_inclusive, prts=prts, prt_inclusive=prt_inclusive, prots=prots, prot_inclusive=prot_inclusive, query=query_param)
-
-    info(f"query: {query}")
+    print(info(f"query: {query}"))
     # return
     watch_thread = Thread(target=aws_watch, args=(query, {
         'region': filter_regions(regs, reg_inclusive),
@@ -79,5 +80,7 @@ def build_query(**kwargs):
             return_query += f"protocol = {protocol_table[prot]} or "
         return_query = return_query.rstrip(' or')
         return_query += ')'
+
+    return_query += f" and log_status='OK'" if return_query != '' else f"| filter log_status='OK'"
 
     return return_query

@@ -33,7 +33,6 @@ class Rule:
                             ipaddresses.append(ip)
             return ipaddresses
 
-        floating: bool
         source_ips = []
         dest_ips = []
         myIps = traceGroup(self.group_id)

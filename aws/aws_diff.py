@@ -1,11 +1,11 @@
+from rich import print
 from threading import Thread
-from aws.common import error_handling
 from aws.sg import grab_sec_groups
 import boto3
 from aws.sso import SSO
 
 
-def aws_diff(sg1_id, sg2_id):
+def aws_diff(sg1_id, sg2_id, console_functions):
     sso = SSO()
     threads = []
     sg1 = None
@@ -38,13 +38,11 @@ def aws_diff(sg1_id, sg2_id):
 
     if sg1 == None or sg2 == None:
         if sg1 == None:
-            if sg2 == None:
-                pass
-            else:
-                pass
-            return
+            print(console_functions['error'](
+                f'Cannot find group {sg1_id}. Stopping'))
         if sg2 == None:
-            pass
+            print(console_functions['error'](
+                f'Cannot find group {sg2_id}. Stopping'))
         return
 
     # output to files

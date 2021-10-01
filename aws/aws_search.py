@@ -7,7 +7,7 @@ from .sgr import grab_sec_group_rules, Rule
 from rich import print
 
 
-def aws_search(filters, console_functions):
+def aws_search(filters):
     auth = SSO()
     threads = []
     ruleMap = {}
