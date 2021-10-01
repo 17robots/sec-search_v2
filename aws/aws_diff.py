@@ -8,8 +8,7 @@ from aws.sso import SSO
 def aws_diff(sg1_id, sg2_id, console_functions):
     sso = SSO()
     threads = []
-    sg1 = None
-    sg2 = None
+    sg1, sg2 = None, None
     for region in sso.getRegions():
         for account in sso.getAccounts()['accountList']:
             def thread_func():
@@ -20,10 +19,12 @@ def aws_diff(sg1_id, sg2_id, console_functions):
                     client = boto3.client('ec2', region_name=thread_region, aws_access_key_id=creds.access_key,
                                           aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
                     for group in grab_sec_groups(client):
-                        if group.id == sg1_id:
+                        if group['GroupId'] == sg1_id:
+                            print('found')
                             nonlocal sg1
                             sg1 = group
-                        elif group.id == sg2_id:
+                        elif group['GroupId'] == sg2_id:
+                            print('found')
                             nonlocal sg2
                             sg2 = group
                 except:
