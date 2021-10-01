@@ -7,6 +7,8 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 
+from aws.common import error_handling
+
 
 class SSO:
     def __init__(self) -> None:
@@ -30,16 +32,11 @@ class SSO:
             timestamp = datetime.timestamp(datetime.now())
             if timestamp < self.cred_table[account_id].expiration - 60:
                 return self.cred_table[account_id]
-        try:
-            creds = self.client.get_role_credentials(
-                accountId=account_id, accessToken=self.access_token, roleName='AWSPowerUserAccess')
-            self.cred_table[account_id] = Credentials(access_key=creds['roleCredentials']['accessKeyId'], secret_access_key=creds['roleCredentials']
-                                                      ['secretAccessKey'], session_token=creds['roleCredentials']['sessionToken'], expiration=creds['roleCredentials']['expiration'])
-            return self.cred_table[account_id]
-
-        except ClientError as e:
-            print(account_id, e)
-            return
+        creds = self.client.get_role_credentials(
+            accountId=account_id, accessToken=self.access_token, roleName='AWSPowerUserAccess')
+        self.cred_table[account_id] = Credentials(access_key=creds['roleCredentials']['accessKeyId'], secret_access_key=creds['roleCredentials']
+                                                  ['secretAccessKey'], session_token=creds['roleCredentials']['sessionToken'], expiration=creds['roleCredentials']['expiration'])
+        return self.cred_table[account_id]
 
     def getRegions(self):
         initAccount = self.getAccounts()['accountList'][0]['accountId']

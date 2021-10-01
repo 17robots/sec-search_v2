@@ -7,12 +7,14 @@ from datetime import datetime
 from .common import *
 from cli.console_logger import console_functions
 
+
 @click.command()
 @click.option('-output', default=None, type=str, help="File to output results of command to")
 @click.option('-show-floating', default=False, type=bool, help="Show rules not attached to instances")
 @common_options
 def search(**kwargs):
-    [info, warning, error] = destructure(console_functions, 'info', 'warning', 'error')
+    [info, warning, error] = destructure(
+        console_functions, 'info', 'warning', 'error')
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
@@ -43,10 +45,10 @@ def search(**kwargs):
 
     start = time.time()
     results = aws_search(filters, console_functions)
-    info(f'{len(results)} results found in {time.time() - start}s')
+    print(f'{len(results)} results found in {time.time() - start}s')
     filename = output if output != None else "{}-{}.txt".format("search",
                                                                 str(datetime.now()).replace(" ", "_").replace(":", "-"))
-    info(f"Printing results to {filename}")
+    print(f"Printing results to {filename}")
     try:
         with open(filename, 'w') as f:
             f.write('\n'.join([str(result) for result in results]))

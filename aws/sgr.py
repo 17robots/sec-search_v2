@@ -1,5 +1,7 @@
 from typing import List
 from traceback import print_stack
+
+from aws.common import error_handling
 from .instance import Instance
 
 
@@ -32,38 +34,35 @@ class Rule:
             return ipaddresses
 
         floating: bool
-        try:
-            source_ips = []
-            dest_ips = []
-            myIps = traceGroup(self.group_id)
-            floating = len(myIps) == 0
-            if self.ref_group:
-                sec_ips = traceGroup(self.ref_group)
-                if self.is_egress:
-                    source_ips = myIps
-                    dest_ips = sec_ips
-                else:
-                    source_ips = sec_ips
-                    dest_ips = myIps
-            elif self.cidrv4:
-                if self.is_egress:
-                    source_ips = myIps
-                    dest_ips = [self.cidrv4]
-                else:
-                    source_ips = [self.cidrv4]
-                    dest_ips = myIps
-            elif self.cidrv6:
-                if self.is_egress:
-                    source_ips = myIps
-                    dest_ips = [self.cidrv6]
-                else:
-                    source_ips = [self.cidrv6]
-                    dest_ips = myIps
+        source_ips = []
+        dest_ips = []
+        myIps = traceGroup(self.group_id)
+        floating = len(myIps) == 0
+        if self.ref_group:
+            sec_ips = traceGroup(self.ref_group)
+            if self.is_egress:
+                source_ips = myIps
+                dest_ips = sec_ips
             else:
-                source_ips = ['0.0.0.0/0']
-                dest_ips = ['0.0.0.0/0']
-        except Exception as e:
-            print_stack(e)
+                source_ips = sec_ips
+                dest_ips = myIps
+        elif self.cidrv4:
+            if self.is_egress:
+                source_ips = myIps
+                dest_ips = [self.cidrv4]
+            else:
+                source_ips = [self.cidrv4]
+                dest_ips = myIps
+        elif self.cidrv6:
+            if self.is_egress:
+                source_ips = myIps
+                dest_ips = [self.cidrv6]
+            else:
+                source_ips = [self.cidrv6]
+                dest_ips = myIps
+        else:
+            source_ips = ['0.0.0.0/0']
+            dest_ips = ['0.0.0.0/0']
         return source_ips, dest_ips, floating
 
     def __init__(self, rule, instances: List[Instance]) -> None:
