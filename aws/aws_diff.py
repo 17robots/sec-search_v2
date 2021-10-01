@@ -47,13 +47,16 @@ def aws_diff(sg1_id, sg2_id, console_functions):
         return
 
     # output to files
-    with open(f'{sg1_id}-{sg2_id}_{sg1}.txt', 'w') as f:
-        f.write('Inbound Rules')
-        f.write(*sg1['inbound'], sep='\n')
-        f.write('Outbound Rules')
-        f.write(*sg1['outbound'], sep='\n')
+    with open(f'{sg1_id}-{sg2_id}_{sg1_id}.txt', 'w') as f:
+        f.write('Inbound Rules\n')
+        f.write('\n'.join(str(rule) for rule in sg1['IpPermissions']))
+        f.write('\n')
+        f.write('Outbound Rules\n')
+        f.write('\n'.join(str(rule) for rule in sg1['IpPermissionsEgress']))
+
     with open(f'{sg1_id}-{sg2_id}_{sg2_id}.txt', 'w') as f:
-        f.write('Inbound Rules')
-        f.write(*sg2['inbound'], sep='\n')
-        f.write('Outbound Rules')
-        f.write(*sg2['outbound'], sep='\n')
+        f.write('Inbound Rules\n')
+        f.write('\n'.join(str(rule) for rule in sg2['IpPermissions']))
+        f.write('\n')
+        f.write('Outbound Rules\n')
+        f.write('\n'.join(str(rule) for rule in sg2['IpPermissionsEgress']))
