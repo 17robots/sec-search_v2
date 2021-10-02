@@ -8,7 +8,9 @@ from rich import print
 
 
 @click.command()
-@click.option('-query', default=None, type=str, help="File to output results of command to")
+@click.option('-query', default=None, type=str, help="Query to run against cloudwatch")
+@click.option('-start', default=None, type=str, help="Start time for pulling logs")
+@click.option('-end', default=None, type=str, help="End time for pulling logs")
 @common_options
 def watch(**kwargs):
     kill_lock = Event()
@@ -17,7 +19,8 @@ def watch(**kwargs):
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
     # print(accts)
-    [query_param] = destructure(kwargs, 'query')
+    [query_param, start_time, end_time] = destructure(
+        kwargs, 'query', 'start', 'end')
     query = ""
     query = build_query(srcs=srcs, src_inclusive=src_inclusive,
                         dsts=dsts, dst_inclusive=dst_inclusive, prts=prts, prt_inclusive=prt_inclusive, prots=prots, prot_inclusive=prot_inclusive, query=query_param)
@@ -26,7 +29,7 @@ def watch(**kwargs):
     watch_thread = Thread(target=aws_watch, args=(query, {
         'region': filter_regions(regs, reg_inclusive),
         'account': filter_accounts(accts, acct_inclusive)
-    }, kill_lock, console_functions))
+    }, kill_lock, start_time, end_time))
 
     watch_thread.start()
     keyboard.add_hotkey(hotkey='q', callback=kill_lock.set, suppress=True)
@@ -37,7 +40,6 @@ def build_query(**kwargs):
     protocol_table = {
         'tcp': 6,
         'udp': 17,
-        'something': -1,
     }
 
     [srcs, src_incl, dsts, dst_incl, prts, prt_incl, prots, prot_incl, query] = destructure(
