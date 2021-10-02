@@ -16,6 +16,7 @@ def watch(**kwargs):
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
+    # print(accts)
     [query_param] = destructure(kwargs, 'query')
     query = ""
     query = build_query(srcs=srcs, src_inclusive=src_inclusive,

@@ -32,7 +32,7 @@ def filter_regions(regions, inclusive):
 def filter_accounts(accounts, inclusive):
     def filter_func(account):
         if len(accounts) > 0:
-            if account in accounts:
+            if account['accountId'] in accounts:
                 return inclusive
             return not inclusive
         return True
