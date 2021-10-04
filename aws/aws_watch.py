@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import threading
 import boto3
 from aws.sso import SSO
-from traceback import print_stack
 from rich import print
 
 
