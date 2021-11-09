@@ -120,3 +120,56 @@ def parse_common_args(**kwargs):
         '!').split(',')] if acctStr != None else []
 
     return [(srcs, '!' not in srcStr if srcStr != None else True), (dsts, '!' not in destStr if destStr != None else True), (prts, '!' not in portStr if portStr != None else True), (prots, '!' not in protocolStr if protocolStr != None else True), (regs, '!' not in regStr if regStr != None else True), (accts, '!' not in acctStr if acctStr != None else True)]
+
+
+def build_query(**kwargs):
+    protocol_table = {
+        'tcp': 6,
+        'udp': 17,
+    }
+
+    [srcs, src_incl, dsts, dst_incl, prts, prt_incl, prots, prot_incl, query] = destructure(
+        kwargs, 'srcs', 'src_inclusive', 'dsts', 'dst_inclusive', 'prts', 'prt_inclusive', 'prots', 'prot_inclusive', 'query')
+    if query:
+        return query
+
+    return_query = ''
+    if len(srcs) > 0:
+        not_string = 'not ' if not src_incl else ''
+        return_query += f" | filter {not_string}("
+        for src in srcs:
+            return_query += f"pkt_srcaddr = \"{src}\" or "
+        return_query = return_query.rstrip(' or')
+        return_query += ')'
+
+    if len(dsts) > 0:
+        not_string = 'not ' if not dst_incl else ''
+        return_query += f" and {not_string}(" if return_query != '' else f"| filter {not_string}("
+        for dst in dsts:
+            return_query += f"pkt_dstaddr = \"{dst}\" or "
+        return_query = return_query.rstrip(' or')
+        return_query += ')'
+
+    if len(prts) > 0:
+        not_string = 'not ' if not prt_incl else ''
+        return_query += f" and {not_string}(" if return_query != '' else f"| filter {not_string}("
+        for prt in prts:
+            return_query += f"srcport = \"{prt}\" or "
+            return_query += f"dstport = \"{prt}\" or "
+        return_query = return_query.rstrip(' or')
+        return_query += ')'
+
+    if len(prots) > 0:
+        not_string = 'not ' if not prot_incl else ''
+        return_query += f" and {not_string}(" if return_query != '' else f"| filter {not_string}("
+        for prot in prots:
+            if not prot in protocol_table:
+                print(f'[yellow]ignoring {prot}[/yellow]')
+                continue
+            return_query += f"protocol = {protocol_table[prot]} or "
+        return_query = return_query.rstrip(' or')
+        return_query += ')'
+
+    return_query += f" and log_status='OK'" if return_query != '' else f"| filter log_status='OK'"
+
+    return return_query

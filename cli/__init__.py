@@ -1,7 +1,7 @@
 import click
 from .diff import diff
 from .search import search
-from .watch import watch
+from .log_watch import watch
 
 
 @click.group()
@@ -10,5 +10,5 @@ def cli():
 
 
 cli.add_command(search, 'search')
-cli.add_command(watch, 'watch')
+cli.add_command(watch, 'log-watch')
 cli.add_command(diff, 'diff')

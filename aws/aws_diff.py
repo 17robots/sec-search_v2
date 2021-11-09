@@ -8,6 +8,8 @@ from aws.sso import SSO
 def aws_diff(sg1_id, sg2_id, console_functions):
     sso = SSO()
     threads = []
+    sg1_inbound, sg1_outbound = [], []
+    sg2_inbound, sg2_outbound = [], []
     sg1, sg2 = None, None
     for region in sso.getRegions():
         for account in sso.getAccounts()['accountList']:
@@ -46,17 +48,33 @@ def aws_diff(sg1_id, sg2_id, console_functions):
                 f'Cannot find group {sg2_id}. Stopping'))
         return
 
+    for rule in sg1['IpPermissions']:
+        if len(list(filter(lambda x: 'ToPort' in x and 'ToPort' in rule and rule['FromPort'] == x['FromPort'] and rule['ToPort'] == x['ToPort'] and rule['IpProtocol'] == x['IpProtocol'] and rule['Description'] == x['Description'], sg2['IpPermissions']))) == 0:
+            sg1_inbound.append(rule)
+
+    for rule in sg2['IpPermissions']:
+        if len(list(filter(lambda x: 'ToPort' in x and 'ToPort' in rule and rule['FromPort'] == x['FromPort'] and rule['ToPort'] == x['ToPort'] and rule['IpProtocol'] == x['IpProtocol'] and rule['Description'] == x['Description'], sg1['IpPermissions']))) == 0:
+            sg2_inbound.append(rule)
+
+    for rule in sg1['IpPermissionsEgress']:
+        if len(list(filter(lambda x: 'ToPort' in x and 'ToPort' in rule and rule['FromPort'] == x['FromPort'] and rule['ToPort'] == x['ToPort'] and rule['IpProtocol'] == x['IpProtocol'] and rule['Description'] == x['Description'], sg2['IpPermissionsEgress']))) == 0:
+            sg1_outbound.append(rule)
+
+    for rule in sg2['IpPermissionsEgress']:
+        if len(list(filter(lambda x: 'ToPort' in x and 'ToPort' in rule and rule['FromPort'] == x['FromPort'] and rule['ToPort'] == x['ToPort'] and rule['IpProtocol'] == x['IpProtocol'] and rule['Description'] == x['Description'], sg1['IpPermissionsEgress']))) == 0:
+            sg2_outbound.append(rule)
+
     # output to files
     with open(f'{sg1_id}-{sg2_id}_{sg1_id}.txt', 'w') as f:
         f.write('Inbound Rules\n')
-        f.write('\n'.join(str(rule) for rule in sg1['IpPermissions']))
+        f.write('\n'.join(str(rule) for rule in sg1_inbound))
         f.write('\n')
         f.write('Outbound Rules\n')
-        f.write('\n'.join(str(rule) for rule in sg1['IpPermissionsEgress']))
+        f.write('\n'.join(str(rule) for rule in sg1_outbound))
 
     with open(f'{sg1_id}-{sg2_id}_{sg2_id}.txt', 'w') as f:
         f.write('Inbound Rules\n')
-        f.write('\n'.join(str(rule) for rule in sg2['IpPermissions']))
+        f.write('\n'.join(str(rule) for rule in sg2_inbound))
         f.write('\n')
         f.write('Outbound Rules\n')
-        f.write('\n'.join(str(rule) for rule in sg2['IpPermissionsEgress']))
+        f.write('\n'.join(str(rule) for rule in sg2_outbound))
