@@ -1,0 +1,8 @@
+- calling requires auth
+- superclient?
+- ec2 client
+
+- separate library
+  - iam - acct specific but not region specific
+  - ec2 - 
+

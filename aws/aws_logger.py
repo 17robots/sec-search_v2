@@ -2,42 +2,28 @@ import boto3
 from aws.common import error_handling
 from aws.log import Log, get_log_names, query_results, start_query
 from aws.sso import SSO
-from datetime import datetime, timedelta, timestamp
+from datetime import datetime, timedelta
 
 import threading
 
 message_pattern = '/(?<version>\S+)\s+(?<account_id>\S+)\s+(?<interface_id>\S+)\s+(?<srcaddr>\S+)\s+(?<dstaddr>\S+)\s+(?<srcport>\S+)\s+(?<dstport>\S+)\s+(?<protocol>\S+)\s+(?<packets>\S+)\s+(?<bytes>\S+)\s+(?<start>\S+)\s+(?<end>\S+)\s+(?<action>\S+)\s+(?<log_status>\S+)(?:\s+(?<vpc_id>\S+)\s+(?<subnet_id>\S+)\s+(?<instance_id>\S+)\s+(?<tcp_flags>\S+)\s+(?<type>\S+)\s+(?<pkt_srcaddr>\S+)\s+(?<pkt_dstaddr>\S+))?(?:\s+(?<region>\S+)\s+(?<az_id>\S+)\s+(?<sublocation_type>\S+)\s+(?<sublocation_id>\S+))?(?:\s+(?<pkt_src_aws_service>\S+)\s+(?<pkt_dst_aws_service>\S+)\s+(?<flow_direction>\S+)\s+(?<traffic_path>\S+))?/'
 
+# 2021-11-10T19:39:41+00:00
+
 
 def aws_log_grabber(query, filters, start_date, end_date, start_time, end_time, start_time_full, end_time_full):
-
     # handle time conversion
-
-    # so there are 2 ways we can handle this
-    # 1. we can use a date and a time for each and then we can convert them to datetimes and add them
-    # lets do this one first
     query_start_datetime: datetime
-    try:
-        query_start_datetime = datetime.combine(
-            datetime.date(start_date), datetime.time(start_time))
-    except Exception as e:
-        print(e)
-        return
-
     query_end_datetime: datetime
     try:
-        query_end_datetime = datetime.combine(
-            datetime.date(end_date), datetime.time(end_time))
+        query_start_datetime = datetime(start_time_full) if start_time_full else datetime.combine(
+            datetime.strptime(start_date, '%m/%d/%Y'), datetime.strptime(start_time, '%H:%M:%S'))
+        query_end_datetime = query_end_datetime = datetime(end_time_full) if end_time_full else datetime.combine(
+            datetime.strptime(end_date, '%m/%d/%Y'), datetime.strptime(end_time, '%H:%M:%S'))
     except Exception as e:
         print(e)
         return
-    # 2. we can make them submit the datetime in the proper format
-    try:
-        query_start_datetime = datetime(start_time_full)
-        query_end_datetime = datetime(end_time_full)
-    except Exception as e:
-        print(e)
-        return
+
     # do our bound checking
 
     # start after end
