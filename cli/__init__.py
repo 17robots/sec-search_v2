@@ -7,7 +7,7 @@ from .log_watch import watch
 
 @click.group()
 def cli():
-    pass
+    ... ### used for initial cli setup
 
 
 cli.add_command(search, 'search')

@@ -3,9 +3,7 @@ import time
 from aws.aws_search import aws_search
 from aws.sgr import Rule
 from datetime import datetime
-from .common import *
-from cli.console_logger import console_functions
-
+from .common import filter_ips, filter_port, filter_protocol, filter_accounts, filter_regions, parse_common_args, destructure, common_options
 
 @click.command()
 @click.option('-output', default=None, type=str, help="File to output results of command to")
@@ -22,7 +20,7 @@ def search(**kwargs):
         allow_floating = False
 
     def filterRule(rule: Rule):
-        if rule.floating == True and allow_floating == False:
+        if rule.floating and allow_floating is False:
             return False
         if not filter_ips(rule.source_ips, srcs, inclusive=src_inclusive):
             return False
@@ -43,7 +41,7 @@ def search(**kwargs):
     start = time.time()
     results = aws_search(filters)
     print(f'{len(results)} results found in {time.time() - start}s')
-    filename = output if output != None else "{}-{}.txt".format("search",
+    filename = output if output is not None else "{}-{}.txt".format("search",
                                                                 str(datetime.now()).replace(" ", "_").replace(":", "-"))
     print(f"Printing results to {filename}")
     try:

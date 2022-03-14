@@ -1,8 +1,8 @@
-import click
-from cli.common import common_options, parse_common_args, destructure, build_query, filter_accounts, filter_regions
-from cli.console_logger import console_functions
-from aws.aws_logger import aws_log_grabber
-from threading import Thread
+# import click
+# from cli.common import common_options, parse_common_args, destructure, build_query, filter_accounts, filter_regions
+# from cli.console_logger import console_functions
+# from aws.aws_logger import aws_log_grabber
+# from threading import Thread
 
 
 # @click.command()

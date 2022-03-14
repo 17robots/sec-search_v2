@@ -94,7 +94,7 @@ def parse_common_args(**kwargs):
 
     if not srcs:
         srcs = [src.strip(' ') for src in srcStr.strip(
-            '!').split(',')] if srcStr != None else []
+            '!').split(',')] if srcStr is not None else []
 
     dsts = []
     if destStr:
@@ -108,18 +108,18 @@ def parse_common_args(**kwargs):
 
     if not dsts:
         dsts = [dst.strip(' ') for dst in destStr.strip(
-            '!').split(',')] if destStr != None else []
+            '!').split(',')] if destStr is not None else []
 
     prts = [prt.strip(' ') for prt in portStr.strip(
-        '!').split(',')] if portStr != None else []
+        '!').split(',')] if portStr is not None else []
     prots = [prot.strip(' ') for prot in protocolStr.strip(
-        '!').split(',')] if protocolStr != None else []
+        '!').split(',')] if protocolStr is not None else []
     regs = [reg.strip(' ') for reg in regStr.strip(
-        '!').split(',')] if regStr != None else []
+        '!').split(',')] if regStr is not None else []
     accts = [acct.strip(' ') for acct in acctStr.strip(
-        '!').split(',')] if acctStr != None else []
+        '!').split(',')] if acctStr is not None else []
 
-    return [(srcs, '!' not in srcStr if srcStr != None else True), (dsts, '!' not in destStr if destStr != None else True), (prts, '!' not in portStr if portStr != None else True), (prots, '!' not in protocolStr if protocolStr != None else True), (regs, '!' not in regStr if regStr != None else True), (accts, '!' not in acctStr if acctStr != None else True)]
+    return [(srcs, '!' not in srcStr if srcStr is not None else True), (dsts, '!' not in destStr if destStr is not None else True), (prts, '!' not in portStr if portStr is not None else True), (prots, '!' not in protocolStr if protocolStr is not None else True), (regs, '!' not in regStr if regStr is not None else True), (accts, '!' not in acctStr if acctStr is not None else True)]
 
 
 def build_query(**kwargs):

@@ -17,7 +17,7 @@ def query_results(client, query_id):
     try:
         return client.get_query_results(queryId=query_id)
     except ClientError as e:
-        pass
+        return None
 
 
 class Log:
