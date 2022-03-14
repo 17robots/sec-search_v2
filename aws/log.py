@@ -3,20 +3,20 @@ from botocore.exceptions import ClientError
 
 
 def get_log_names(client):
-    """ get vpc log names from client """
+    """Get vpc log names from client"""
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()
     return [log['LogGroupName'] for val in paginator for log in val['FlowLogs'] if 'LogGroupName' in log]
 
 
 def start_query(client, log_name, start_time, end_time, query):
-    """ start query """
+    """Start query"""
     return client.start_query(logGroupName=log_name, startTime=int(start_time.timestamp()), endTime=int(
         end_time.timestamp()), queryString=query)['queryId']
 
 
 def query_results(client, query_id):
-    """ query results """
+    """Query results"""
     try:
         return client.get_query_results(queryId=query_id)
     except ClientError:

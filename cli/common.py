@@ -3,7 +3,7 @@ import ipaddress
 
 
 def common_options(func):
-    """ easy wrapper for multiple common options for commands """
+    """Wrapper for multiple common options for commands"""
     @click.option('-sources', default=None, type=str, help='Name or ip of source vm', required=False)
     @click.option('-dests',  default=None, type=str, help='Name or ip of dest vm', required=False)
     @click.option('-regions', default=None, type=str, help='Regions to filter by', required=False)
@@ -12,18 +12,20 @@ def common_options(func):
     @click.option('-protocols',  default=None, type=str, help='Protocols to filter by', required=False)
     @click.option('--no-ui',  default=False, type=bool, help='Disable TUI And Show Raw Output', required=False)
     def wrapped_func(*args, **kwargs):
+        """function wrapper to be called"""
         func(*args, **kwargs)
     return wrapped_func
 
 
 def destructure(obj, *keys):
-    """ Destructure a dict into a list of values."""
+    """Destructure a dict into a list of values."""
     return [obj[k] if k in obj else None for k in keys]
 
 
 def filter_regions(regions, inclusive):
-    """ filter regions based on what is specified """
+    """Filter regions based on what is specified"""
     def filter_func(region):
+        """Function wrapper to be called"""
         if len(regions) > 0:
             if region in regions:
                 return inclusive
@@ -33,8 +35,9 @@ def filter_regions(regions, inclusive):
 
 
 def filter_accounts(accounts, inclusive):
-    """ filter accounts based on what is specified """
+    """Filter accounts based on what is specified"""
     def filter_func(account):
+        """Function wrapper to be called"""
         if len(accounts) > 0:
             if account['accountId'] in accounts:
                 return inclusive
@@ -45,7 +48,7 @@ def filter_accounts(accounts, inclusive):
 
 # return whether the rule should be let through based on the ip filter
 def filter_ips(ips, criteria_ips, inclusive):
-    """ filter ips based on what is specified """
+    """Filter ips based on what is specified"""
     if len(criteria_ips) > 0:
         for ip in ips:
             for criteria in criteria_ips:
@@ -68,7 +71,7 @@ def filter_ips(ips, criteria_ips, inclusive):
 
 # return whether the rule should be let through based on the port filter
 def filter_port(port, ports, inclusive):
-    """ filter ips based on what is specified """
+    """Filter ips based on what is specified"""
     if len(ports) > 0:
         if str(port) in ports:
             return inclusive
@@ -78,7 +81,7 @@ def filter_port(port, ports, inclusive):
 
 # return whether the rule should be let through based on the port filter
 def filter_protocol(proto, protos, inclusive):
-    """ filter ips based on what is specified """
+    """Filter ips based on what is specified"""
     if len(protos) > 0:
         if proto in protos:
             return inclusive
@@ -87,7 +90,7 @@ def filter_protocol(proto, protos, inclusive):
 
 
 def parse_common_args(**kwargs):
-    """ parse and return the common args among commands from console input """
+    """Parse and return the common args among commands from console input"""
     [srcStr, destStr, regStr, acctStr, portStr, protocolStr] = destructure(
         kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols')  # grab args
 
@@ -110,7 +113,7 @@ def parse_common_args(**kwargs):
 
 
 def read_arr_file(file):
-    """ read lines of file into arr """
+    """Read lines of file into arr """
     ret = []
     try:
         with open(file, 'w') as f:
@@ -121,7 +124,7 @@ def read_arr_file(file):
     return ret
 
 def build_query(**kwargs):
-    """ create the aws query based on the console args """
+    """Create the aws query based on the console args"""
     protocol_table = {
         'tcp': 6,
         'udp': 17,

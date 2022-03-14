@@ -1,8 +1,9 @@
 from traceback import print_stack
 
 def error_handling(func):
-    """ provide a general purpose function wrapper for error handling """
+    """Provide a general purpose function wrapper for error handling"""
     def inner_func(*args, **kwargs):
+        """inner funtion returned when calling"""
         try:
             func(*args, **kwargs)
         except Exception as e:

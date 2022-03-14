@@ -11,6 +11,7 @@ from .common import filter_ips, filter_port, filter_protocol, filter_accounts, f
 @click.option('-show-floating', default=False, type=bool, help="Show rules not attached to instances")
 @common_options
 def search(**kwargs):
+    """Search function called when using cli command"""
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
@@ -21,6 +22,7 @@ def search(**kwargs):
         allow_floating = False
 
     def filterRule(rule: Rule):
+        """Filter rule based on input"""
         if rule.floating and allow_floating is False:
             return False
         if not filter_ips(rule.source_ips, srcs, inclusive=src_inclusive):

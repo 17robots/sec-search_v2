@@ -5,6 +5,7 @@ from .log_watch import watch
 
 @click.group()
 def cli():
+    """Main cli caller for click"""
     ...  # used for initial cli setup
 
 

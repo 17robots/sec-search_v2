@@ -4,7 +4,7 @@ from .instance import Instance
 
 
 def grab_sec_group_rules(client):
-    """ grab security group rules from boto3"""
+    """Grab security group rules from boto3"""
     paginator = client.get_paginator('describe_security_group_rules').paginate(
         PaginationConfig={'PageSize': 1000})
     return [val for result in paginator for val in result['SecurityGroupRules']]
@@ -29,8 +29,9 @@ class Rule:
         floating (bool): Indicates whether the rule is attached to an instance.
     """
     def expand(self, instances: List[Instance]):
-        """ expand rules if they have security group ids as source or dest and if they are attached to instances """
+        """Expand rules if they have security group ids as source or dest and if they are attached to instances"""
         def traceGroup(group):
+            """function wrapper to be called"""
             ipaddresses = []
             for instance in instances:
                 if instance.sec_grps and group in instance.sec_grps:

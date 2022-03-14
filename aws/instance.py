@@ -1,12 +1,12 @@
 def grab_instances(client):
-    """ grab instances from aws """
+    """Grab instances from aws """
     paginator = client.get_paginator('describe_instances').paginate()
     return [val for result in paginator for reservation in result['Reservations'] for val in reservation['Instances']]
 
 
 class Instance:
-    """ 
-    Instance class based on data from boto3 
+    """
+    Instance class based on data from boto3
     Attributes:
         id (str): instance id
         priv_dns (str): private dns name
@@ -18,14 +18,13 @@ class Instance:
         priv_ipv4 (list): private ipv4 addresses
         priv_ipv6 (list): private ipv6 addresses
     """
-    
+
     def __init__(self, instance) -> None:
         """
-        Init 
+        Init
         Parameters
             instance (string): instance data from boto3 as string
         """
-
         self.id = instance['InstanceId']
         self.priv_dns = instance['PrivateDnsName']
         self.pub_dns = instance['PublicDnsName']

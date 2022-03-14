@@ -7,7 +7,7 @@ from rich import print as richprint
 
 
 def aws_search(filters):
-    """ search aws for rules based on filters """
+    """Search aws for rules based on filters"""
     auth = SSO()
     threads = []
     ruleMap = {}
