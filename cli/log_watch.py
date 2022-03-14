@@ -1,7 +1,7 @@
 import click
 from threading import Event, Thread
 import keyboard
-from rich import print
+from rich import print as richprint
 
 from cli.console_logger import console_functions
 from cli.common import common_options, destructure, filter_accounts, filter_regions, parse_common_args, build_query
@@ -24,7 +24,7 @@ def watch(**kwargs):
     query = ""
     query = build_query(srcs=srcs, src_inclusive=src_inclusive,
                         dsts=dsts, dst_inclusive=dst_inclusive, prts=prts, prt_inclusive=prt_inclusive, prots=prots, prot_inclusive=prot_inclusive, query=query_param)
-    print(info(f"query: {query}"))
+    richprint(info(f"query: {query}"))
     # return
     watch_thread = Thread(target=aws_watch, args=(query, {
         'region': filter_regions(regs, reg_inclusive),

@@ -82,34 +82,13 @@ def filter_protocol(proto, protos, inclusive):
 def parse_common_args(**kwargs):
     [srcStr, destStr, regStr, acctStr, portStr, protocolStr] = destructure(
         kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols')  # grab args
+
     srcs = []
     if srcStr:
-        if '@' in srcStr:
-            try:
-                with open(srcStr[srcStr.index('@')+1:], 'w') as f:
-                    for line in f:
-                        srcs.append(line)
-            except:
-                pass  # change this
-
-    if not srcs:
-        srcs = [src.strip(' ') for src in srcStr.strip(
-            '!').split(',')] if srcStr is not None else []
-
+        srcs = read_arr_file(srcStr[srcStr.index('@')+1:]) if '@' in srcStr else [src.strip(' ') for src in srcStr.strip('!').split(',')]
     dsts = []
     if destStr:
-        if '@' in destStr:
-            try:
-                with open(destStr[destStr.index('@')+1:], 'w') as f:
-                    for line in f:
-                        dsts.append(line)
-            except:
-                pass  # change this
-
-    if not dsts:
-        dsts = [dst.strip(' ') for dst in destStr.strip(
-            '!').split(',')] if destStr is not None else []
-
+        dsts = read_arr_file(destStr[destStr.index('@')+1:]) if '@' in destStr else [dst.strip(' ') for dst in destStr.strip('!').split(',')]
     prts = [prt.strip(' ') for prt in portStr.strip(
         '!').split(',')] if portStr is not None else []
     prots = [prot.strip(' ') for prot in protocolStr.strip(
@@ -121,6 +100,16 @@ def parse_common_args(**kwargs):
 
     return [(srcs, '!' not in srcStr if srcStr is not None else True), (dsts, '!' not in destStr if destStr is not None else True), (prts, '!' not in portStr if portStr is not None else True), (prots, '!' not in protocolStr if protocolStr is not None else True), (regs, '!' not in regStr if regStr is not None else True), (accts, '!' not in acctStr if acctStr is not None else True)]
 
+
+def read_arr_file(file):
+    ret = []
+    try:
+        with open(file, 'w') as f:
+            for line in f:
+                ret.append(line)
+    except:
+        pass  # change this
+    return ret
 
 def build_query(**kwargs):
     protocol_table = {

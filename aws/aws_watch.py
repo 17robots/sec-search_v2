@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 import threading
 import boto3
-from rich import print
+from rich import print as richprint
 
 from aws.common import error_handling
 from aws.log import Log, get_log_names, query_results, start_query
@@ -25,7 +25,7 @@ def aws_watch(query, filters, kill_lock):
             creds = sso.getCreds(account_id=account['accountId'])
             client = boto3.client('ec2', region_name=region, aws_access_key_id=creds.access_key,
                                   aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
-            print(
+            richprint(
                 f"[yellow]Grabbing Names For {region}-{account['accountId']}[/yellow]")
             names = get_log_names(client)
 
@@ -70,7 +70,7 @@ def aws_watch(query, filters, kill_lock):
                             log = Log(log_entry)
                             if log.log_status != 'NODATA':
                                 color = 'green' if log.action == 'ACCEPT' else 'red'
-                                print(f"[{color}]{log}[/{color}]")
+                                richprint(f"[{color}]{log}[/{color}]")
                             if kill_lock.is_set():
                                 return
                             time.sleep(1)

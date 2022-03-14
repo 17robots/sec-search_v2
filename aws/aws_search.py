@@ -1,10 +1,9 @@
 import boto3
 from threading import Thread
-from aws.common import error_handling
 from aws.instance import Instance, grab_instances
 from .sso import SSO
 from .sgr import grab_sec_group_rules, Rule
-from rich import print
+from rich import print as richprint
 
 
 def aws_search(filters):
@@ -30,15 +29,14 @@ def aws_search(filters):
                 client = boto3.client('ec2', region_name=region, aws_access_key_id=creds.access_key,
                                       aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
                 instances = list(
-                    map(lambda x: Instance(x), grab_instances(client)))
+                    map(Instance, grab_instances(client)))
                 rules = list(map(lambda x: Rule(x, instances),
                                  grab_sec_group_rules(client)))
-                ruleMap[thread_region][thread_account] = list(filter(lambda x: filters['rule'](
-                    x), rules))
+                ruleMap[thread_region][thread_account] = list(filter(filters['rule'], rules))
 
                 color = 'red' if len(
                     ruleMap[thread_region][thread_account]) == 0 else 'green'
-                print(
+                richprint(
                     f"[{color}]{thread_region}-{thread_account}: {len(ruleMap[thread_region][thread_account])} results[/{color}]")
 
             x = Thread(daemon=True, target=thread_func,
