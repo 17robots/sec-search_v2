@@ -40,7 +40,7 @@ class SSO:
             secret_access_key=creds['roleCredentials']['secretAccessKey'],
             session_token=creds['roleCredentials']['sessionToken'],
             expiration=creds['roleCredentials']['expiration']
-            )
+        )
         return self.cred_table[account_id]
 
     def getRegions(self):
@@ -58,7 +58,7 @@ class SSO:
 @dataclass
 class Credentials:
     """Wrapper class to manage aws credentials"""
-    
+
     access_key: str
     secret_access_key: str
     session_token: str
