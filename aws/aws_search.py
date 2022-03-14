@@ -21,12 +21,9 @@ def aws_search(filters):
             if not account['accountId'] in ruleMap[region]:
                 ruleMap[region][account['accountId']] = []
 
-            def thread_func():
-                thread_region = region
-                myAccount = account
-                thread_account = myAccount['accountId']
+            def thread_func(thread_region, thread_account):
                 creds = auth.getCreds(account_id=thread_account)
-                client = boto3.client('ec2', region_name=region, aws_access_key_id=creds.access_key,
+                client = boto3.client('ec2', region_name=thread_region, aws_access_key_id=creds.access_key,
                                       aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
                 instances = list(
                     map(Instance, grab_instances(client)))
@@ -40,7 +37,7 @@ def aws_search(filters):
                     f"[{color}]{thread_region}-{thread_account}: {len(ruleMap[thread_region][thread_account])} results[/{color}]")
 
             x = Thread(daemon=True, target=thread_func,
-                       name=f"{region}-{account['accountId']}")
+                       name=f"{region}-{account['accountId']}", args=(region, account['accountId']))
             threads.append(x)
             x.start()
     for process in threads:

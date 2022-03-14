@@ -30,10 +30,7 @@ def aws_watch(query, filters, kill_lock):
             names = get_log_names(client)
 
             @error_handling
-            def sub_thread_func(name):
-                thread_region = region
-                myAccount = account
-                thread_account = myAccount['accountId']
+            def sub_thread_func(name, thread_region, thread_account):
                 nonlocal clientLock
                 start_time = None
                 while True:
@@ -81,7 +78,7 @@ def aws_watch(query, filters, kill_lock):
                 return
             for name in names:
                 x = threading.Thread(target=sub_thread_func, args=(
-                    name,), name=f"{region}-{account['accountId']}-{name}")
+                    name,region, account['accountId']), name=f"{region}-{account['accountId']}-{name}")
                 threads.append(x)
                 x.start()
     for process in threads:
