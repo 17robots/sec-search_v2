@@ -2,10 +2,10 @@ def grab_instances(client):
     """Grab instances from aws """
     paginator = client.get_paginator('describe_instances').paginate()
     return [
-        val for 
-            result in paginator
-                for reservation in result['Reservations']
-                    for val in reservation['Instances']
+        val for
+        result in paginator
+        for reservation in result['Reservations']
+        for val in reservation['Instances']
     ]
 
 
@@ -37,18 +37,18 @@ class Instance:
                          for grpId in instance['SecurityGroups']]
         self.other_grps = [
             grp['GroupId'] for interface in instance['NetworkInterfaces']
-                for grp in interface['Groups']
+            for grp in interface['Groups']
         ]
         self.pub_ip = instance['PublicIpAddress']\
             if 'PublicIpAddress' in instance else None
         self.vpc_id = instance['VpcId'] if 'VpcId' in instance else None
         self.priv_ipv4 = [
-            address['PrivateIpAddress'] 
-                for interface in instance['NetworkInterfaces']
-                    for address in interface['PrivateIpAddresses']
+            address['PrivateIpAddress']
+            for interface in instance['NetworkInterfaces']
+            for address in interface['PrivateIpAddresses']
         ]
         self.priv_ipv6 = [
-            address for 
-                interface in instance['NetworkInterfaces']
-                    for address in interface['Ipv6Addresses']
+            address for
+            interface in instance['NetworkInterfaces']
+            for address in interface['Ipv6Addresses']
         ]

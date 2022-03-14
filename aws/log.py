@@ -7,10 +7,10 @@ def get_log_names(client):
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()
     return [
-        log['LogGroupName'] 
-            for val in paginator 
-                for log in val['FlowLogs']
-                    if 'LogGroupName' in log
+        log['LogGroupName']
+        for val in paginator
+        for log in val['FlowLogs']
+        if 'LogGroupName' in log
     ]
 
 
@@ -68,6 +68,7 @@ class Log:
         flow_direction (str): The flow direction of the log entry
         traffic_path (str): The traffic path of the log entry
     """
+
     def __init__(self, log_record) -> None:
         """
         Init
