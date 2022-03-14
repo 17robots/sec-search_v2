@@ -4,13 +4,32 @@ from .instance import Instance
 
 
 def grab_sec_group_rules(client):
+    """ grab security group rules from boto3"""
     paginator = client.get_paginator('describe_security_group_rules').paginate(
         PaginationConfig={'PageSize': 1000})
     return [val for result in paginator for val in result['SecurityGroupRules']]
 
 
 class Rule:
+    """
+    Rule class for boto3 response
+    Attributes:
+        id (str): The ID of the security group rule.
+        description (str): A description of the rule.
+        group_id (str): The security group ID in which the rule belongs.
+        is_egress (bool): Indicates whether this is an inbound rule or an outbound rule.
+        protocol (str): The IP protocol name or number.
+        from_port (int): The start of the port range.
+        to_port (int): The end of the port range.
+        cidrv4 (str): The IPv4 CIDR range.
+        cidrv6 (str): The IPv6 CIDR range.
+        ref_group (str): The ID of the referenced security group.
+        source_ips (List[str]): The source IP addresses.
+        dest_ips (List[str]): The destination IP addresses.
+        floating (bool): Indicates whether the rule is attached to an instance.
+    """
     def expand(self, instances: List[Instance]):
+        """ expand rules if they have security group ids as source or dest and if they are attached to instances """
         def traceGroup(group):
             ipaddresses = []
             for instance in instances:
@@ -63,6 +82,12 @@ class Rule:
         return source_ips, dest_ips, floating
 
     def __init__(self, rule, instances: List[Instance]) -> None:
+        """
+        Init
+        Parameters:
+            rule (dict): The rule dict from boto3
+            instances (List[Instance]): List of instances
+        """
         self.id = rule['SecurityGroupRuleId']
         self.description = rule['Description'] if 'Description' in rule else ''
         self.group_id = rule['GroupId']

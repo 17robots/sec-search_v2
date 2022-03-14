@@ -3,17 +3,20 @@ from botocore.exceptions import ClientError
 
 
 def get_log_names(client):
+    """ get vpc log names from client """
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()
     return [log['LogGroupName'] for val in paginator for log in val['FlowLogs'] if 'LogGroupName' in log]
 
 
 def start_query(client, log_name, start_time, end_time, query):
+    """ start query """
     return client.start_query(logGroupName=log_name, startTime=int(start_time.timestamp()), endTime=int(
         end_time.timestamp()), queryString=query)['queryId']
 
 
 def query_results(client, query_id):
+    """ query results """
     try:
         return client.get_query_results(queryId=query_id)
     except ClientError:
@@ -21,7 +24,47 @@ def query_results(client, query_id):
 
 
 class Log:
+    """
+    Log entry class for handling boto3 logs
+    Attributes
+        main_string (str): The raw log entry
+        timestamp (str): The timestamp of the log entry
+        version (str): The version of the log entry
+        account_id (str): The account ID of the log entry
+        interface_id (str): The interface ID of the log entry
+        srcaddr (str): The source address of the log entry
+        dstaddr (str): The destination address of the log entry
+        srcport (str): The source port of the log entry
+        dstport (str): The destination port of the log entry
+        protocol (str): The protocol of the log entry
+        packets (str): The number of packets of the log entry
+        bytes (str): The number of bytes of the log entry
+        start (str): The start time of the log entry
+        end (str): The end time of the log entry
+        action (str): The action of the log entry
+        log_status (str): The status of the log entry
+        vpc_id (str): The VPC ID of the log entry
+        subnet_id (str): The subnet ID of the log entry
+        instance_id (str): The instance ID of the log entry
+        tcp_flags (str): The TCP flags of the log entry
+        type (str): The type of the log entry
+        pkt_srcaddr (str): The source address of the packet of the log entry
+        pkt_dstaddr (str): The destination address of the packet of the log entry
+        region (str): The region of the log entry
+        az_id (str): The AZ ID of the log entry
+        sublocation_type (str): The sublocation type of the log entry
+        sublocation_id (str): The sublocation ID of the log entry
+        pkt_src_aws_service (str): The source AWS service of the packet of the log entry
+        pkt_dst_aws_service (str): The destination AWS service of the packet of the log entry
+        flow_direction (str): The flow direction of the log entry
+        traffic_path (str): The traffic path of the log entry
+    """
     def __init__(self, log_record) -> None:
+        """
+        Init
+        Parameters
+            log_record (string): The raw log entry from boto3
+        """
         self.main_string = log_record
         fields = log_record.split(' ')
         self.timestamp = fields[0] if fields[0] != '-' else None

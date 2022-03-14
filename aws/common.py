@@ -1,6 +1,7 @@
 from traceback import print_stack
 
 def error_handling(func):
+    """ provide a general purpose function wrapper for error handling """
     def inner_func(*args, **kwargs):
         try:
             func(*args, **kwargs)

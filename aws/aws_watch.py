@@ -13,6 +13,7 @@ message_pattern = r'/(?<version>\S+)\s+(?<account_id>\S+)\s+(?<interface_id>\S+)
 
 
 def aws_watch(query, filters, kill_lock):
+    """ keep live watch on aws vpc logs using specified filters """
     sso = SSO()
     threads = []
     regions = list(filter(filters['region'], sso.getRegions()))
@@ -78,7 +79,7 @@ def aws_watch(query, filters, kill_lock):
                 return
             for name in names:
                 x = threading.Thread(target=sub_thread_func, args=(
-                    name,region, account['accountId']), name=f"{region}-{account['accountId']}-{name}")
+                    name, region, account['accountId']), name=f"{region}-{account['accountId']}-{name}")
                 threads.append(x)
                 x.start()
     for process in threads:

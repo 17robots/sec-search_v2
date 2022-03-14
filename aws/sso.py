@@ -7,6 +7,9 @@ from datetime import datetime
 
 
 class SSO:
+    """
+    Manage SSO for aws
+    """
     def __init__(self) -> None:
         self.region = 'us-east-1'
         user_profile_directory = Path(os.getenv('USERPROFILE'))
@@ -21,9 +24,11 @@ class SSO:
         self.cred_table = {}
 
     def getAccounts(self):
+        """ returns accounts in region based on access token"""
         return self.client.list_accounts(accessToken=self.access_token)
 
     def getCreds(self, account_id):
+        """ returns creds for account_id """
         if account_id in self.cred_table:
             timestamp = datetime.timestamp(datetime.now())
             if timestamp < self.cred_table[account_id].expiration - 60:
@@ -35,6 +40,7 @@ class SSO:
         return self.cred_table[account_id]
 
     def getRegions(self):
+        """ returns regions in aws """
         initAccount = self.getAccounts()['accountList'][0]['accountId']
         initCreds = self.getCreds(initAccount)
         ec2 = boto3.client('ec2', region_name='us-east-1', aws_access_key_id=initCreds.access_key,
@@ -45,6 +51,7 @@ class SSO:
 
 @dataclass
 class Credentials:
+    """ wrapper class to manage aws credentials """
     access_key: str
     secret_access_key: str
     session_token: str
