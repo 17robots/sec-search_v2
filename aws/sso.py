@@ -58,6 +58,7 @@ class SSO:
 @dataclass
 class Credentials:
     """Wrapper class to manage aws credentials"""
+    
     access_key: str
     secret_access_key: str
     session_token: str

@@ -47,7 +47,7 @@ def common_options(func):
         required=False
     )
     def wrapped_func(*args, **kwargs):
-        """function wrapper to be called"""
+        """Function wrapper to be called"""
         func(*args, **kwargs)
     return wrapped_func
 
@@ -127,7 +127,14 @@ def filter_protocol(proto, protos, inclusive):
 def parse_common_args(**kwargs):
     """Parse and return the common args among commands from console input"""
     [srcStr, destStr, regStr, acctStr, portStr, protocolStr] = destructure(
-        kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols')  # grab args
+        kwargs.get('kwargs'),
+        'sources',
+        'dests',
+        'regions',
+        'accounts',
+        'ports',
+        'protocols'
+    )  # grab args
 
     srcs = []
     if srcStr:
@@ -157,7 +164,7 @@ def parse_common_args(**kwargs):
 
 
 def read_arr_file(file):
-    """Read lines of file into arr """
+    """Read lines of file into arr"""
     ret = []
     try:
         with open(file, 'w') as f:
@@ -166,6 +173,7 @@ def read_arr_file(file):
     except:
         pass  # change this
     return ret
+
 
 def build_query(**kwargs):
     """Create the aws query based on the console args"""
@@ -186,7 +194,7 @@ def build_query(**kwargs):
             'prots',
             'prot_inclusive',
             'query'
-        )
+    )
     if query:
         return query
 

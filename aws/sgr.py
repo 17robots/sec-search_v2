@@ -28,13 +28,14 @@ class Rule:
         dest_ips (List[str]): The destination IP addresses.
         floating (bool): Indicates whether the rule is attached to an instance.
     """
+
     def expand(self, instances: List[Instance]):
         """
         Expand rules if they have security group ids as source or dest and if they
         are attached to instances
         """
         def traceGroup(group):
-            """function wrapper to be called"""
+            """Function wrapper to be called"""
             ipaddresses = []
             for instance in instances:
                 if instance.sec_grps and group in instance.sec_grps:
