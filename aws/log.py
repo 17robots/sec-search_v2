@@ -16,7 +16,7 @@ def start_query(client, log_name, start_time, end_time, query):
 def query_results(client, query_id):
     try:
         return client.get_query_results(queryId=query_id)
-    except ClientError as e:
+    except ClientError:
         return None
 
 

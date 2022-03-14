@@ -1,5 +1,4 @@
 def grab_sec_groups(client):
-    groups = []
     paginator = client.get_paginator('describe_security_groups').paginate(
         PaginationConfig={'PageSize': 1000})
     return [val for result in paginator for val in result['SecurityGroups']]

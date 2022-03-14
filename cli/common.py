@@ -80,8 +80,8 @@ def filter_protocol(proto, protos, inclusive):
 
 
 def parse_common_args(**kwargs):
-    [srcStr, destStr, regStr, acctStr, portStr, protocolStr, no_ui] = destructure(
-        kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols', 'no_ui')  # grab args
+    [srcStr, destStr, regStr, acctStr, portStr, protocolStr] = destructure(
+        kwargs.get('kwargs'), 'sources', 'dests', 'regions', 'accounts', 'ports', 'protocols')  # grab args
     srcs = []
     if srcStr:
         if '@' in srcStr:

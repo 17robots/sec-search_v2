@@ -29,7 +29,7 @@ def watch(**kwargs):
     watch_thread = Thread(target=aws_watch, args=(query, {
         'region': filter_regions(regs, reg_inclusive),
         'account': filter_accounts(accts, acct_inclusive)
-    }, kill_lock, start_time, end_time))
+    }, kill_lock))
 
     watch_thread.start()
     keyboard.add_hotkey(hotkey='q', callback=kill_lock.set, suppress=True)
