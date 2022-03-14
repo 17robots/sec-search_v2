@@ -3,17 +3,34 @@ import time
 from aws.aws_search import aws_search
 from aws.sgr import Rule
 from datetime import datetime
-from .common import filter_ips, filter_port, filter_protocol, filter_accounts, filter_regions, parse_common_args, destructure, common_options
+from .common import filter_ips, filter_port, filter_protocol, filter_accounts,\
+    filter_regions, parse_common_args, destructure, common_options
 
 
 @click.command()
-@click.option('-output', default=None, type=str, help="File to output results of command to")
-@click.option('-show-floating', default=False, type=bool, help="Show rules not attached to instances")
+@click.option(
+    '-output',
+    default=None,
+    type=str,
+    help="File to output results of command to"
+)
+@click.option(
+    '-show-floating',
+    default=False,
+    type=bool,
+    help="Show rules not attached to instances"
+)
 @common_options
 def search(**kwargs):
     """Search function called when using cli command"""
-    [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
-     (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
+    [
+        (srcs, src_inclusive),
+        (dsts, dst_inclusive),
+        (prts, prt_inclusive),
+        (prots, prot_inclusive),
+        (regs, reg_inclusive),
+        (accts, acct_inclusive)
+    ] = parse_common_args(kwargs=kwargs)
 
     # command-specific args
     [output, allow_floating] = destructure(kwargs, 'output', 'show_floating')
@@ -44,8 +61,8 @@ def search(**kwargs):
     start = time.time()
     results = aws_search(filters)
     print(f'{len(results)} results found in {time.time() - start}s')
-    filename = output if output is not None else "{}-{}.txt".format("search",
-                                                                    str(datetime.now()).replace(" ", "_").replace(":", "-"))
+    title = str(datetime.now()).replace(" ", "_").replace(":", "-")
+    filename = output if output is not None else f"search-{title}.txt"
     print(f"Printing results to {filename}")
     try:
         with open(filename, 'w') as f:

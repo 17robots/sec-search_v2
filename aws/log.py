@@ -6,13 +6,20 @@ def get_log_names(client):
     """Get vpc log names from client"""
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()
-    return [log['LogGroupName'] for val in paginator for log in val['FlowLogs'] if 'LogGroupName' in log]
+    return [
+        log['LogGroupName'] for val in paginator for log in val['FlowLogs']\
+            if 'LogGroupName' in log
+    ]
 
 
 def start_query(client, log_name, start_time, end_time, query):
     """Start query"""
-    return client.start_query(logGroupName=log_name, startTime=int(start_time.timestamp()), endTime=int(
-        end_time.timestamp()), queryString=query)['queryId']
+    return client.start_query(
+        logGroupName=log_name,
+        startTime=int(start_time.timestamp()),
+        endTime=int(end_time.timestamp()),
+        queryString=query
+    )['queryId']
 
 
 def query_results(client, query_id):
@@ -54,8 +61,8 @@ class Log:
         az_id (str): The AZ ID of the log entry
         sublocation_type (str): The sublocation type of the log entry
         sublocation_id (str): The sublocation ID of the log entry
-        pkt_src_aws_service (str): The source AWS service of the packet of the log entry
-        pkt_dst_aws_service (str): The destination AWS service of the packet of the log entry
+        pkt_src_aws_service (str): The source packet of the log entry
+        pkt_dst_aws_service (str): The destination packet of the log entry
         flow_direction (str): The flow direction of the log entry
         traffic_path (str): The traffic path of the log entry
     """
@@ -99,4 +106,6 @@ class Log:
         self.traffic_path = fields[30] if fields[30] != '-' else None
 
     def __str__(self) -> str:
-        return f"{self.timestamp} {self.region} {self.account_id} {self.pkt_srcaddr} {self.pkt_dstaddr} {self.srcport} {self.dstport} {self.protocol} {self.action}"
+        return f"{self.timestamp} {self.region} {self.account_id}"\
+            +f"{self.pkt_srcaddr} {self.pkt_dstaddr} {self.srcport}"\
+                +f"{self.dstport} {self.protocol} {self.action}"

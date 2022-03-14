@@ -24,24 +24,41 @@ def aws_search(filters):
 
             def thread_func(thread_region, thread_account):
                 creds = auth.getCreds(account_id=thread_account)
-                client = boto3.client('ec2', region_name=thread_region, aws_access_key_id=creds.access_key,
-                                      aws_secret_access_key=creds.secret_access_key, aws_session_token=creds.session_token)
+                client = boto3.client(
+                    'ec2',
+                    region_name=thread_region,
+                    aws_access_key_id=creds.access_key,
+                    aws_secret_access_key=creds.secret_access_key,
+                    aws_session_token=creds.session_token
+                )
                 instances = list(
-                    map(Instance, grab_instances(client)))
-                rules = list(map(lambda x: Rule(x, instances),
-                                 grab_sec_group_rules(client)))
-                ruleMap[thread_region][thread_account] = list(filter(filters['rule'], rules))
+                    map(Instance, grab_instances(client))
+                )
+                rules = list(
+                    map(lambda x: Rule(x, instances),grab_sec_group_rules(client))
+                )
+                ruleMap[thread_region][thread_account] = list(
+                    filter(filters['rule'], rules)
+                )
 
-                color = 'red' if len(
-                    ruleMap[thread_region][thread_account]) == 0 else 'green'
+                color = 'red' if len(ruleMap[thread_region][thread_account]) == 0 \
+                    else 'green'
                 richprint(
-                    f"[{color}]{thread_region}-{thread_account}: {len(ruleMap[thread_region][thread_account])} results[/{color}]")
+                    f"[{color}]{thread_region}-{thread_account}: "\
+                        +f"{len(ruleMap[thread_region][thread_account])} "\
+                            +f"results[/{color}]"
+                )
 
-            x = Thread(daemon=True, target=thread_func,
-                       name=f"{region}-{account['accountId']}", args=(region, account['accountId']))
+            x = Thread(
+                daemon=True,
+                target=thread_func,
+                name=f"{region}-{account['accountId']}",
+                args=(region, account['accountId'])
+            )
             threads.append(x)
             x.start()
     for process in threads:
         process.join()
 
-    return [rule for region in ruleMap for account in ruleMap[region] for rule in ruleMap[region][account]]
+    return [rule for region in ruleMap for account in ruleMap[region] \
+        for rule in ruleMap[region][account]]

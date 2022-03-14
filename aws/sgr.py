@@ -17,7 +17,7 @@ class Rule:
         id (str): The ID of the security group rule.
         description (str): A description of the rule.
         group_id (str): The security group ID in which the rule belongs.
-        is_egress (bool): Indicates whether this is an inbound rule or an outbound rule.
+        is_egress (bool): Indicates whether this is an inbound rule or an outbound rule
         protocol (str): The IP protocol name or number.
         from_port (int): The start of the port range.
         to_port (int): The end of the port range.
@@ -29,7 +29,8 @@ class Rule:
         floating (bool): Indicates whether the rule is attached to an instance.
     """
     def expand(self, instances: List[Instance]):
-        """Expand rules if they have security group ids as source or dest and if they are attached to instances"""
+        """Expand rules if they have security group ids as source or dest and if they
+        are attached to instances"""
         def traceGroup(group):
             """function wrapper to be called"""
             ipaddresses = []
@@ -98,8 +99,13 @@ class Rule:
         self.to_port = rule['ToPort']
         self.cidrv4 = rule['CidrIpv4'] if 'CidrIpv4' in rule else None
         self.cidrv6 = rule['CidrIpv6'] if 'CidrIpv6' in rule else None
-        self.ref_group = rule['ReferencedGroupInfo']['GroupId'] if 'ReferencedGroupInfo' in rule else None
+        self.ref_group = rule['ReferencedGroupInfo']['GroupId']\
+            if 'ReferencedGroupInfo' in rule else None
         self.source_ips, self.dest_ips, self.floating = self.expand(instances)
 
     def __str__(self) -> str:
-        return f"{self.id} {self.description} {self.group_id} {'Egress' if self.is_egress else 'Ingress'} {self.protocol} from {self.from_port} to {self.to_port} {self.cidrv4} {self.cidrv6} {self.ref_group} sources: {self.source_ips} dests: {self.dest_ips} {'Floating' if self.floating else 'Attached'}"
+        return f"{self.id} {self.description} {self.group_id}"\
+            +f"{'Egress' if self.is_egress else 'Ingress'} {self.protocol}"\
+            +f"from {self.from_port} to {self.to_port} {self.cidrv4} {self.cidrv6}"\
+            +f"{self.ref_group} sources: {self.source_ips} dests: {self.dest_ips}"\
+            +f"{'Floating' if self.floating else 'Attached'}"
