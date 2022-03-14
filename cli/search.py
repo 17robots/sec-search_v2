@@ -12,8 +12,6 @@ from cli.console_logger import console_functions
 @click.option('-show-floating', default=False, type=bool, help="Show rules not attached to instances")
 @common_options
 def search(**kwargs):
-    [error] = destructure(
-        console_functions, 'info', 'warning', 'error')
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
@@ -52,6 +50,6 @@ def search(**kwargs):
         with open(filename, 'w') as f:
             f.write('\n'.join([str(result) for result in results]))
     except Exception as e:
-        print(error(str(e)))
+        print(str(e))
     if len(results) < 20:
         print('\n'.join([str(result) for result in results]))
