@@ -5,7 +5,7 @@ try:
     cli()
 except ClientError as e:
     print(
-        'Cannot Authorize, Please reauth with'\
-        +'aws sso login --profile AWSPowerUserAccess'\
+        'Cannot Authorize, Please reauth with'
+        + 'aws sso login --profile AWSPowerUserAccess'
         if e.response['Error']['Code'] == 'UnauthorizedException' else e
     )

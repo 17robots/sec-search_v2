@@ -29,8 +29,10 @@ class Rule:
         floating (bool): Indicates whether the rule is attached to an instance.
     """
     def expand(self, instances: List[Instance]):
-        """Expand rules if they have security group ids as source or dest and if they
-        are attached to instances"""
+        """
+        Expand rules if they have security group ids as source or dest and if they
+        are attached to instances
+        """
         def traceGroup(group):
             """function wrapper to be called"""
             ipaddresses = []
@@ -105,7 +107,7 @@ class Rule:
 
     def __str__(self) -> str:
         return f"{self.id} {self.description} {self.group_id}"\
-            +f"{'Egress' if self.is_egress else 'Ingress'} {self.protocol}"\
-            +f"from {self.from_port} to {self.to_port} {self.cidrv4} {self.cidrv6}"\
-            +f"{self.ref_group} sources: {self.source_ips} dests: {self.dest_ips}"\
-            +f"{'Floating' if self.floating else 'Attached'}"
+            + f"{'Egress' if self.is_egress else 'Ingress'} {self.protocol}"\
+            + f"from {self.from_port} to {self.to_port} {self.cidrv4} {self.cidrv6}"\
+            + f"{self.ref_group} sources: {self.source_ips} dests: {self.dest_ips}"\
+            + f"{'Floating' if self.floating else 'Attached'}"

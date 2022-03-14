@@ -7,8 +7,10 @@ def get_log_names(client):
     paginator = client.get_paginator(
         'describe_flow_logs').paginate()
     return [
-        log['LogGroupName'] for val in paginator for log in val['FlowLogs']\
-            if 'LogGroupName' in log
+        log['LogGroupName'] 
+            for val in paginator 
+                for log in val['FlowLogs']
+                    if 'LogGroupName' in log
     ]
 
 
@@ -107,5 +109,5 @@ class Log:
 
     def __str__(self) -> str:
         return f"{self.timestamp} {self.region} {self.account_id}"\
-            +f"{self.pkt_srcaddr} {self.pkt_dstaddr} {self.srcport}"\
-                +f"{self.dstport} {self.protocol} {self.action}"
+               + f"{self.pkt_srcaddr} {self.pkt_dstaddr} {self.srcport}"\
+               + f"{self.dstport} {self.protocol} {self.action}"

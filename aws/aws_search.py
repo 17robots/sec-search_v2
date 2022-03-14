@@ -35,7 +35,7 @@ def aws_search(filters):
                     map(Instance, grab_instances(client))
                 )
                 rules = list(
-                    map(lambda x: Rule(x, instances),grab_sec_group_rules(client))
+                    map(lambda x: Rule(x, instances), grab_sec_group_rules(client))
                 )
                 ruleMap[thread_region][thread_account] = list(
                     filter(filters['rule'], rules)
@@ -44,9 +44,9 @@ def aws_search(filters):
                 color = 'red' if len(ruleMap[thread_region][thread_account]) == 0 \
                     else 'green'
                 richprint(
-                    f"[{color}]{thread_region}-{thread_account}: "\
-                        +f"{len(ruleMap[thread_region][thread_account])} "\
-                            +f"results[/{color}]"
+                    f"[{color}]{thread_region}-{thread_account}: "
+                        + f"{len(ruleMap[thread_region][thread_account])} "
+                            + f"results[/{color}]"
                 )
 
             x = Thread(
@@ -60,5 +60,9 @@ def aws_search(filters):
     for process in threads:
         process.join()
 
-    return [rule for region in ruleMap for account in ruleMap[region] \
-        for rule in ruleMap[region][account]]
+    return [
+        rule 
+            for region in ruleMap 
+                for account in ruleMap[region]
+                    for rule in ruleMap[region][account]
+    ]
