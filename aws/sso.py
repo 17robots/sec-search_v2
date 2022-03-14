@@ -5,6 +5,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 
+
 class SSO:
     def __init__(self) -> None:
         self.region = 'us-east-1'

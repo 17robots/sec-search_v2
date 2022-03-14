@@ -77,7 +77,6 @@ def aws_watch(query, filters, kill_lock):
 
                         if response['status'] == 'Complete':
                             break
-                return
             if kill_lock.is_set():
                 return
             for name in names:

@@ -5,6 +5,7 @@ from aws.sgr import Rule
 from datetime import datetime
 from .common import filter_ips, filter_port, filter_protocol, filter_accounts, filter_regions, parse_common_args, destructure, common_options
 
+
 @click.command()
 @click.option('-output', default=None, type=str, help="File to output results of command to")
 @click.option('-show-floating', default=False, type=bool, help="Show rules not attached to instances")
@@ -42,7 +43,7 @@ def search(**kwargs):
     results = aws_search(filters)
     print(f'{len(results)} results found in {time.time() - start}s')
     filename = output if output is not None else "{}-{}.txt".format("search",
-                                                                str(datetime.now()).replace(" ", "_").replace(":", "-"))
+                                                                    str(datetime.now()).replace(" ", "_").replace(":", "-"))
     print(f"Printing results to {filename}")
     try:
         with open(filename, 'w') as f:

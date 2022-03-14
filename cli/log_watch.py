@@ -7,6 +7,7 @@ from cli.console_logger import console_functions
 from cli.common import common_options, destructure, filter_accounts, filter_regions, parse_common_args, build_query
 from aws.aws_watch import aws_watch
 
+
 @click.command()
 @click.option('-query', default=None, type=str, help="Query to run against cloudwatch")
 @click.option('-start', default=None, type=str, help="Start time for pulling logs")

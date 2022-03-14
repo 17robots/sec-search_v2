@@ -1,6 +1,5 @@
 from traceback import print_stack
 
-
 def error_handling(func):
     def inner_func(*args, **kwargs):
         try:

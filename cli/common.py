@@ -170,6 +170,6 @@ def build_query(**kwargs):
         return_query = return_query.rstrip(' or')
         return_query += ')'
 
-    return_query += f" and log_status='OK'" if return_query != '' else f"| filter log_status='OK'"
+    return_query += " and log_status='OK'" if return_query != '' else "| filter log_status='OK'"
 
     return return_query
