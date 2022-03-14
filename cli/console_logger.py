@@ -1,6 +1,3 @@
-from rich import print
-
-
 def error(msg):
     return f"[red]{msg}[/red]"
 
