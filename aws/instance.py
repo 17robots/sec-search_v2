@@ -1,5 +1,5 @@
 def grab_instances(client):
-    """Grab instances from aws """
+    """Grab instances from aws"""
     paginator = client.get_paginator('describe_instances').paginate()
     return [
         val for
