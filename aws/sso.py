@@ -1,14 +1,9 @@
-from botocore.exceptions import ClientError
 from pathlib import Path
 import boto3
-import boto3.session
 import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
-
-from aws.common import error_handling
-
 
 class SSO:
     def __init__(self) -> None:

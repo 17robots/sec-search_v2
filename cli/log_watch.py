@@ -18,7 +18,6 @@ def watch(**kwargs):
     [(srcs, src_inclusive), (dsts, dst_inclusive), (prts, prt_inclusive),
      (prots, prot_inclusive), (regs, reg_inclusive), (accts, acct_inclusive)] = parse_common_args(kwargs=kwargs)
 
-    # print(accts)
     [query_param, start_time, end_time] = destructure(
         kwargs, 'query', 'start', 'end')
     query = ""

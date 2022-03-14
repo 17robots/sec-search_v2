@@ -163,7 +163,7 @@ def build_query(**kwargs):
         not_string = 'not ' if not prot_incl else ''
         return_query += f" and {not_string}(" if return_query != '' else f"| filter {not_string}("
         for prot in prots:
-            if not prot in protocol_table:
+            if prot not in protocol_table:
                 print(f'[yellow]ignoring {prot}[/yellow]')
                 continue
             return_query += f"protocol = {protocol_table[prot]} or "

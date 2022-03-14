@@ -14,7 +14,7 @@ def aws_search(filters):
 
     regions = list(filter(filters['region'], auth.getRegions()))
     for region in regions:
-        if not region in ruleMap:
+        if region not in ruleMap:
             ruleMap[region] = {}
         accounts = list(
             filter(filters['account'], auth.getAccounts()['accountList']))
