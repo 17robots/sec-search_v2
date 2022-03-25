@@ -22,6 +22,7 @@ param (
 )
 
 
+$PREFIX = '17robots/'
 $IMG_NAME = 'awssearch'
 $IMG_VER = '0.0.1'
 $REPO_LOC = 'https://github.com/17robots/sec-search_v2.git'
@@ -40,13 +41,14 @@ $hello = @"
 
 function build() {
     git clone $($REPO_LOC) build
-    cd ./build
-    docker build -t "$($IMG_NAME):$($IMG_VER)" .
-    cd ..
+    Set-Location ./build
+    docker build -t "$($PREFIX)$($IMG_NAME):$($IMG_VER)" .
+    Set-Location ..
+    Remove-Item build -Recurse -Force
 }
 
 function pull() {
-    docker pull "$($IMG_NAME):$($IMG_VER)",
+    docker pull "$($PREFIX)$($IMG_NAME):$($IMG_VER)"
     if((docker image list | Select-String "$($IMG_NAME)").Length -eq 0) {
         throw "Image not found"
     }
@@ -54,7 +56,7 @@ function pull() {
 
 function run() {
     Invoke-Command -ScriptBlock {
-        docker run -v "$($ssopath):/usr/src/user/.aws" -v "$($output):/usr/src/app/output" -it  --rm -t "$($IMG_NAME):$($IMG_VER)" "python" "__main__.py" $($command).Split(' ')
+        docker run -v "$($ssopath):/usr/src/user/.aws" -v "$($output):/usr/src/app/output" -it  --rm -t "$($PREFIX)$($IMG_NAME):$($IMG_VER)" "python" "__main__.py" $($command).Split(' ')
     }
 }
 
@@ -80,14 +82,13 @@ if($pull) {
 }
 
 $tokenTime = (Get-Date).AddHours(-12)
-if((Test-Path "$($ssopath)\sso\cache") -ne $true -or (Get-ChildItem -Path "$($ssopath)\sso\cache" | Where-Object { $_.CreationTime -ge ($tokenTime).Date}).Length -eq 0) {
+if((Test-Path "$($ssopath)\sso\cache") -ne $true -or (Get-ChildItem -Path "$($ssopath)\sso\cache" | Where-Object { $_.LastWriteTime -ge ($tokenTime).Date}).Length -eq 0) {
     aws sso login --profile AWSPowerUserAccess
 }
 
 try {
     pull
 } catch {
-    Write-Host "Could not pull image"
     build
 }
 
