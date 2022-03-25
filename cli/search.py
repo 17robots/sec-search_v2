@@ -62,7 +62,7 @@ def search(**kwargs):
     results = aws_search(filters)
     print(f'{len(results)} results found in {time.time() - start}s')
     title = str(datetime.now()).replace(" ", "_").replace(":", "-")
-    filename = output if output is not None else f"search-{title}.txt"
+    filename = f"output/{output}" if output is not None else f"./output/search-{title}.txt"
     print(f"Printing results to {filename}")
     try:
         with open(filename, 'w') as f:
